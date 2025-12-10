@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Watch Dynamic Screensaver</title>
+    <style>
+        :root {
+            --clock-face-color: 0, 0, 0;
+            --clock-opacity: 0.4;
+            --clock-blur-radius: 15px; /* Controlled by ?blur= */
+            --date-display: none;
+            
+            /* CSS Variables for Clock Background */
+            --clock-bg-image: none;
+            --clock-bg-repeat: no-repeat;
+            --clock-bg-size: auto;
+            --clock-bg-position: center;
+        }
+
+        body {
+            background-color: #000000; 
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            
+            /* Dynamic Page Background Setup */
+            background-image: none;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: auto;
+            transition: background-image 2s ease-in-out, background-color 2s ease-in-out, background-size 0.5s ease;
+        }
+
+        /* --- Main Clock Container (The Liquid Glass) --- */
+        .clock-container {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            
+            /* Clock Background Image */
+            background-image: var(--clock-bg-image);
+            background-repeat: var(--clock-bg-repeat);
+            background-size: var(--clock-bg-size);
+            background-position: var(--clock-bg-position);
+            
+            /* Liquid Glass Effect (Now controlled by --clock-blur-radius) */
+            background-color: rgba(var(--clock-face-color), var(--clock-opacity));
+            backdrop-filter: blur(var(--clock-blur-radius));
+            -webkit-backdrop-filter: blur(var(--clock-blur-radius));
+            
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            opacity: 1;
+            transition: opacity 1.5s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .clock-container.hidden {
+            opacity: 0;
+        }
+        
+        /* --- Date Complication --- */
+        .date-display {
+            display: var(--date-display);
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            text-align: center;
+            
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--clock-bg-color, black);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* --- Clock Face Elements (Ticks, Numbers, Hands, etc. - unchanged) --- */
+        .ticks { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
+        .tick {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            width: 2px;
+            height: 10px;
+            top: 0;
+            left: 50%;
+            transform-origin: center 175px;
+            margin-left: -1px;
+        }
+        .tick.major { background: #ffffff; width: 4px; height: 15px; margin-left: -2px; }
+        .numbers { position: absolute; width: 100%; height: 100%; }
+        .num {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 32px;
+            font-weight: 500;
+            left: 50%;
+            top: 50%;
+            margin-left: -20px;
+            margin-top: -20px;
+        }
+        .hand {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: bottom center;
+            border-radius: 10px;
+            z-index: 10;
+        }
+        .hour-hand { width: 8px; height: 80px; background: #ffffff; margin-left: -4px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
+        .minute-hand { width: 6px; height: 120px; background: #ffffff; margin-left: -3px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
+        .second-hand { width: 2px; height: 140px; background: #ff9500; margin-left: -1px; z-index: 11; }
+        .second-hand::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff9500;
+            border-radius: 50%;
+            bottom: -20px;
+            left: 50%;
+            margin-left: -4px;
+        }
+        .center-cap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: rgba(var(--clock-face-color), var(--clock-opacity));
+            border: 2px solid #ff9500;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 12;
+        }
+
+        /* --- Footer Link Styling (unchanged) --- */
+        .footer-link {
+            position: fixed;
+            bottom: 30px;
+            opacity: 0; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 14px;
+            font-weight: 400;
+            transition: opacity 1s ease, left 0.5s ease, right 0.5s ease;
+            z-index: 100;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+        .footer-link:hover { color: rgba(255, 255, 255, 1); }
+        .footer-link svg { fill: currentColor; width: 20px; height: 20px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
+        .pos-left { left: 30px; right: auto; }
+        .pos-right { left: auto; right: 30px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="clock-container" id="clock">
+        <div class="date-display" id="date-time"></div>
+        <div class="ticks" id="ticks-container"></div>
+        <div class="numbers" id="numbers-container"></div>
+        <div class="hand hour-hand" id="hour"></div>
+        <div class="hand minute-hand" id="minute"></div>
+        <div class="hand second-hand" id="second"></div>
+        <div class="center-cap"></div>
+    </div>
+
+    <a href="https://github.com/andiohn/fruit-html-watch" target="_blank" class="footer-link pos-left" id="gh-link">
+        <svg viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        andiohn / fruit-html-watch
+    </a>
+
+    <script>
+        // --- 1. URL Parameter & Color Handling ---
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // --- PAGE BACKGROUND VARIABLES (For rotation) ---
+        const bgImgData = [
+            {
+                url: urlParams.get('bg_img'),
+                mode: urlParams.get('bg_mode') || 'center'
+            },
+            {
+                url: urlParams.get('bg_img2'),
+                mode: urlParams.get('bg_mode2') || 'center'
+            }
+        ];
+        const activeBackgrounds = bgImgData.filter(item => item.url);
+        let currentBgIndex = 0;
+
+        // --- CLOCK BACKGROUND VARIABLES ---
+        const clockBgImg = urlParams.get('clock_bg_img');
+        const clockBgMode = urlParams.get('clock_bg_mode') || 'center';
+
+        // --- GENERAL VARIABLES ---
+        const bgColor = urlParams.get('bg') || '#000000';
+        const dateFlag = urlParams.get('date');
+        const reloadHours = parseFloat(urlParams.get('reload_h')) || 12;
+        
+        // NEW: Blur toggle - Read blur value, default to 15px
+        const blurPixels = parseFloat(urlParams.get('blur')) || 15;
+        document.documentElement.style.setProperty('--clock-blur-radius', `${blurPixels}px`);
+
+
+        // Function to convert HEX to RGB for CSS variable
+        function hexToRgb(hex) {
+            const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+        }
+
+        // Apply Clock Face Color (as RGB for opacity and HEX for text contrast)
+        document.documentElement.style.setProperty('--clock-face-color', hexToRgb(bgColor));
+        document.documentElement.style.setProperty('--clock-bg-color', bgColor);
+
+        // Apply Date Visibility
+        if (dateFlag && dateFlag.toLowerCase() === 'show') {
+            document.documentElement.style.setProperty('--date-display', 'block');
+        }
+
+        // Function to set clock container background
+        function setClockBackground(url, mode) {
+            if (url) {
+                document.documentElement.style.setProperty('--clock-bg-image', `url('${url}')`);
+                
+                let size = 'auto';
+                let repeat = 'no-repeat';
+                let position = 'center';
+
+                if (mode === 'tile') {
+                    repeat = 'repeat';
+                    size = 'auto';
+                } else if (mode === 'cover') {
+                    repeat = 'no-repeat';
+                    size = 'cover';
+                }
+                
+                document.documentElement.style.setProperty('--clock-bg-repeat', repeat);
+                document.documentElement.style.setProperty('--clock-bg-size', size);
+                document.documentElement.style.setProperty('--clock-bg-position', position);
+            } else {
+                document.documentElement.style.setProperty('--clock-bg-image', 'none');
+            }
+        }
+        
+        // Apply Clock Background on load
+        setClockBackground(clockBgImg, clockBgMode);
+
+
+        // Function to set the body (page) background style
+        function setBodyBackground(data) {
+            if (data.url) {
+                document.body.style.backgroundImage = `url('${data.url}')`;
+                if (data.mode === 'tile') {
+                    document.body.style.backgroundRepeat = 'repeat';
+                    document.body.style.backgroundSize = 'auto';
+                    document.body.style.backgroundPosition = '0 0';
+                } else if (data.mode === 'cover') {
+                    document.body.style.backgroundRepeat = 'no-repeat';
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                } else {
+                    document.body.style.backgroundRepeat = 'no-repeat';
+                    document.body.style.backgroundSize = 'auto';
+                    document.body.style.backgroundPosition = 'center';
+                }
+            } else {
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = bgColor;
+            }
+        }
+
+        // --- 2. Element Selectors and Initial Setup (Clock Face) ---
+        const clockContainer = document.getElementById('clock');
+        const ticksContainer = document.getElementById('ticks-container');
+        const numbersContainer = document.getElementById('numbers-container');
+        const hourHand = document.getElementById('hour');
+        const minuteHand = document.getElementById('minute');
+        const secondHand = document.getElementById('second');
+        const ghLink = document.getElementById('gh-link');
+        const dateTimeElement = document.getElementById('date-time');
+        const radius = 135;
+
+        for (let i = 0; i < 60; i++) {
+            const tick = document.createElement('div');
+            tick.classList.add('tick');
+            if (i % 5 === 0) tick.classList.add('major');
+            tick.style.transform = `rotate(${i * 6}deg)`;
+            ticksContainer.appendChild(tick);
+        }
+        for (let i = 1; i <= 12; i++) {
+            const num = document.createElement('div');
+            num.classList.add('num');
+            num.innerText = i;
+            const angle = (i * 30) * (Math.PI / 180); 
+            const x = Math.sin(angle) * radius; 
+            const y = -Math.cos(angle) * radius; 
+            num.style.transform = `translate(${x}px, ${y}px)`;
+            numbersContainer.appendChild(num);
+        }
+
+        // --- 3. Clock Movement Logic ---
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const milliseconds = now.getMilliseconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            const secondsDegrees = ((seconds + (milliseconds / 1000)) / 60) * 360;
+            const minutesDegrees = ((minutes + seconds / 60) / 60) * 360;
+            const hoursDegrees = ((hours + minutes / 60) / 12) * 360;
+
+            secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+            minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+            hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+            
+            if (seconds === 0) {
+                updateDateDisplay(now);
+            }
+
+            requestAnimationFrame(updateClock);
+        }
+
+        function updateDateDisplay(now) {
+            const dayOptions = { weekday: 'short' };
+            const dateOptions = { day: 'numeric' };
+            
+            const day = now.toLocaleDateString(undefined, dayOptions).toUpperCase();
+            const date = now.toLocaleDateString(undefined, dateOptions);
+
+            dateTimeElement.textContent = `${day} ${date}`;
+        }
+
+        updateDateDisplay(new Date());
+        requestAnimationFrame(updateClock);
+
+        // --- 4. Clock Burn-in Logic (Every 60s) ---
+        function moveClock() {
+            clockContainer.classList.add('hidden');
+            setTimeout(() => {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                const clockSize = 350;
+                
+                const randomX = Math.random() * (screenWidth - clockSize);
+                const randomY = Math.random() * (screenHeight - clockSize);
+
+                clockContainer.style.transform = 'none'; 
+                clockContainer.style.left = `${randomX}px`;
+                clockContainer.style.top = `${randomY}px`;
+                clockContainer.classList.remove('hidden');
+            }, 1500); 
+        }
+        setInterval(moveClock, 60000);
+
+        // --- 5. Page Image Rotation Logic (Every 10 minutes) ---
+        const TEN_MINUTES = 10 * 60 * 1000;
+        
+        if (activeBackgrounds.length > 1) {
+            setBodyBackground(activeBackgrounds[currentBgIndex]);
+
+            setInterval(() => {
+                currentBgIndex = (currentBgIndex + 1) % activeBackgrounds.length;
+                setBodyBackground(activeBackgrounds[currentBgIndex]);
+            }, TEN_MINUTES);
+        } else if (activeBackgrounds.length === 1) {
+            setBodyBackground(activeBackgrounds[0]);
+        } else {
+             setBodyBackground({});
+        }
+
+        // --- 6. Footer Link Logic (Every 5 minutes) ---
+        const FIVE_MINUTES = 5 * 60 * 1000; 
+
+        setTimeout(() => {
+            ghLink.style.opacity = '1';
+            setInterval(() => {
+                if (ghLink.classList.contains('pos-left')) {
+                    ghLink.classList.remove('pos-left');
+                    ghLink.classList.add('pos-right');
+                } else {
+                    ghLink.classList.remove('pos-right');
+                    ghLink.classList.add('pos-left');
+                }
+            }, FIVE_MINUTES);
+        }, FIVE_MINUTES);
+
+
+        // --- 7. Page Reload Logic (Custom Hours) ---
+        if (reloadHours > 0) {
+            const reloadTimeMs = reloadHours * 60 * 60 * 1000;
+
+            console.log(`Scheduling full page reload in ${reloadHours} hours (${reloadTimeMs}ms).`);
+            setTimeout(() => {
+                console.log("Custom reload timeout reached. Reloading page.");
+                // Reload the page, bypassing the cache (true) to ensure a clean start.
+                location.reload(true); 
+            }, reloadTimeMs); 
+        } else {
+            console.log("Automatic page reload is disabled.");
+        }
+
+    </script>
+</body>
+</html>
