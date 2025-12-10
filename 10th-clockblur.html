@@ -35,18 +35,13 @@
             transition: background-image 2s ease-in-out, background-color 2s ease-in-out, background-size 0.5s ease;
         }
 
-        /* --- Main Clock Wrapper (Holds the shape and blur) --- */
+        /* --- Main Clock Wrapper (Positioning and Boundary) --- */
         .clock-container {
             position: absolute;
             width: 350px;
             height: 350px;
             border-radius: 50%;
-            overflow: hidden; /* Crucial for keeping the background image inside the circle */
-            
-            /* Apply Liquid Glass Effect here (blurring what's behind/inside) */
-            background-color: rgba(var(--clock-face-color), var(--clock-opacity));
-            backdrop-filter: blur(var(--clock-blur-radius));
-            -webkit-backdrop-filter: blur(var(--clock-blur-radius));
+            overflow: hidden; 
             
             top: 50%;
             left: 50%;
@@ -57,23 +52,39 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
         
-        /* --- CLOCK BACKGROUND OVERLAY (THE FIX) --- */
-        /* This layer sits directly inside the clock container */
+        /* --- CLOCK BACKGROUND OVERLAY (THE IMAGE) --- */
         .background-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Place behind the hands and numbers */
+            /* z-index: -1 removed to allow for correct blurring context */
             
             background-image: var(--clock-bg-image);
             background-repeat: var(--clock-bg-repeat);
             background-size: var(--clock-bg-size);
             background-position: var(--clock-bg-position);
         }
-        /* The backdrop-filter on .clock-container will now blur this layer, too! */
-        
+
+        /* --- LIQUID GLASS BLUR LAYER (THE FIX) --- */
+        /* This new element is essential: it sits on top of the image/color, 
+           blurs that image, and also blurs the content behind the clock. */
+        .liquid-glass-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            z-index: 5; /* Sit below the ticks and hands, but above the background */
+
+            /* Apply filter and transparent background color here */
+            background-color: rgba(var(--clock-face-color), var(--clock-opacity));
+            backdrop-filter: blur(var(--clock-blur-radius));
+            -webkit-backdrop-filter: blur(var(--clock-blur-radius));
+        }
+
         .clock-container.hidden {
             opacity: 0;
         }
@@ -85,7 +96,7 @@
             top: 75px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 15;
+            z-index: 15; /* Ensure it is above the liquid glass layer (z-index: 5) */
             text-align: center;
             
             background: rgba(255, 255, 255, 0.95);
@@ -98,8 +109,9 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
         }
 
-        /* --- Clock Face Elements (Ticks, Numbers, Hands, etc. - unchanged) --- */
-        .ticks { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
+        /* --- Clock Face Elements (Ticks, Numbers, Hands, etc. - z-index updated) --- */
+        /* All these need a higher z-index (e.g., 10+) than the liquid-glass-layer (z-index: 5) */
+        .ticks { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; }
         .tick {
             position: absolute;
             background: rgba(255, 255, 255, 0.4);
@@ -111,7 +123,7 @@
             margin-left: -1px;
         }
         .tick.major { background: #ffffff; width: 4px; height: 15px; margin-left: -2px; }
-        .numbers { position: absolute; width: 100%; height: 100%; }
+        .numbers { position: absolute; width: 100%; height: 100%; z-index: 10; }
         .num {
             position: absolute;
             width: 40px;
@@ -131,7 +143,7 @@
             bottom: 50%;
             transform-origin: bottom center;
             border-radius: 10px;
-            z-index: 10;
+            z-index: 10; /* Z-index is 10 for hour/minute */
         }
         .hour-hand { width: 8px; height: 80px; background: #ffffff; margin-left: -4px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
         .minute-hand { width: 6px; height: 120px; background: #ffffff; margin-left: -3px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
@@ -187,6 +199,8 @@
 
     <div class="clock-container" id="clock">
         <div class="background-overlay" id="clock-bg-overlay"></div>
+        
+        <div class="liquid-glass-layer"></div>
         
         <div class="date-display" id="date-time"></div>
         <div class="ticks" id="ticks-container"></div>
