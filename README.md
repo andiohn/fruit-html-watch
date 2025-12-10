@@ -16,3 +16,6 @@ URL Flags
 |?bg_mode=|tile, center, cover|How the background image is displayed.|center|
 |?bg=|[HEX or Color Name]|Sets the color of the translucent "Liquid Glass" clock face.|#000000 (Black)|
 |?date=|show or hide|Toggles the visibility of the date and day of the week.|hide|
+
+EXAMPLE (Preview):
+https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg&bg_mode=cover&date=show
