@@ -24,6 +24,8 @@ URL Flags
 |?bg=|[HEX or Color Name]|Sets the color of the translucent "Liquid Glass" clock face.|#000000 (Black)|
 |?date=|show or hide|Toggles the visibility of the date and day of the week.|hide|
 |?reload_h=|# of Hours|Set the interval of an automagic reload, without cache|12 hours|
+|?clock_bg_img=|[URL]|Set unblurred clock background|None (try https://gifroz.vercel.app)
+|?clock_bg_mode=|tile, center, cover|How the clock background image is displayed.|center|
 
 EXAMPLES(Preview):
 
