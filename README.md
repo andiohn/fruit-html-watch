@@ -19,9 +19,8 @@ URL Flags
 
 EXAMPLES(Preview):
 
-Awesome Mac OS default wallpaper, date on, cover image
-
-https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg&bg_mode=cover&date=show
+|Descriptions|Link|
+|Awesome Mac OS default wallpaper, date on, cover image|https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg&bg_mode=cover&date=show|
 
 iPad iOS 13 Image background, date on, center image
 
