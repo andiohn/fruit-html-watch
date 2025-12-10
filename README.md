@@ -17,5 +17,19 @@ URL Flags
 |?bg=|[HEX or Color Name]|Sets the color of the translucent "Liquid Glass" clock face.|#000000 (Black)|
 |?date=|show or hide|Toggles the visibility of the date and day of the week.|hide|
 
-EXAMPLE (Preview):
+EXAMPLES(Preview):
+
+Awesome Mac OS default wallpaper, date on, cover image
 https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg&bg_mode=cover&date=show
+
+iPad iOS 13 Image background, date on, center image
+https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ispazio-13.jpg&bg_mode=center&date=show
+
+Mac OS Sequoia (Large) background, date on, cover image
+https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2024/06/SequoiaLight.png&bg_mode=cover&date=show
+
+Classic Mac OS Grey Linen background, date off
+https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png&bg_mode=tile&date=hide
+
+iPhone Background, date on, tile image
+https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/5th-rev-add-date.html&bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ios-15-stock-wallapper-from-ispazio-dark.png&bg_mode=tile&date=show
