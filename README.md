@@ -1,5 +1,5 @@
 # fruit-html-watch
-HTML Watch recreation of a fruit smartwatch
+HTML Watch recreation of a fruit smartwatch, WITH burn in prevention. 
 
 This is a recreation of a certain companies' smart watch but with some fun additions.
 
@@ -7,6 +7,9 @@ This is a recreation of a certain companies' smart watch but with some fun addit
 2. Can use any image URL as the background by passing in a url flag, along with tile, cover and center modes
 3. Can use any colour as a background instead of an image, turned on with a URL flag too
 4. Date can be turned on with a URL flag too
+
+<img width="1920" height="993" alt="image" src="https://github.com/user-attachments/assets/b0c3e132-2d14-4df5-b092-57118806bbf8" />
+
 
 URL Flags
 
