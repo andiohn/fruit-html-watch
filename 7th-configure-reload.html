@@ -199,6 +199,9 @@
         // Clock Face Variables
         const bgColor = urlParams.get('bg') || '#000000';
         const dateFlag = urlParams.get('date');
+        
+        // RELOAD FLAG: Read reload time in hours, default to 12
+        const reloadHours = parseFloat(urlParams.get('reload_h')) || 12;
 
         // Function to convert HEX to RGB for CSS variable
         function hexToRgb(hex) {
@@ -357,15 +360,19 @@
         }, FIVE_MINUTES);
 
 
-        // --- 7. Page Reload Logic (Every 12 hours) ---
-        const TWELVE_HOURS = 12 * 60 * 60 * 1000; // 43,200,000 milliseconds
+        // --- 7. Page Reload Logic (Custom Hours) ---
+        if (reloadHours > 0) {
+            const reloadTimeMs = reloadHours * 60 * 60 * 1000;
 
-        console.log("Scheduling full page reload in 12 hours.");
-        setTimeout(() => {
-            console.log("12-hour timeout reached. Reloading page.");
-            // Reload the page, bypassing the cache (true) to ensure a clean start.
-            location.reload(true); 
-        }, TWELVE_HOURS); 
+            console.log(`Scheduling full page reload in ${reloadHours} hours (${reloadTimeMs}ms).`);
+            setTimeout(() => {
+                console.log("Custom reload timeout reached. Reloading page.");
+                // Reload the page, bypassing the cache (true) to ensure a clean start.
+                location.reload(true); 
+            }, reloadTimeMs); 
+        } else {
+            console.log("Automatic page reload is disabled.");
+        }
 
     </script>
 </body>
