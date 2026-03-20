@@ -31,6 +31,10 @@
         input, select { background: #2c2c2e; border: none; color: white; padding: 12px; border-radius: 8px; font-size: 0.9rem; outline: none; }
         input:focus { background: #3a3a3c; }
 
+        /* Checkbox Styling */
+        .checkbox-group { flex-direction: row; align-items: center; gap: 10px; cursor: pointer; }
+        .checkbox-group input { width: 18px; height: 18px; cursor: pointer; }
+
         .btn-container { position: sticky; bottom: 20px; padding: 10px 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); width: 100%; display: flex; justify-content: center; z-index: 100; }
         button#go { width: 100%; max-width: 400px; padding: 18px; background: var(--primary); border: none; border-radius: 14px; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 10px 20px rgba(0,122,255,0.3); transition: all 0.2s; }
         button#go:hover { transform: scale(1.02); background: #0071eb; }
@@ -109,6 +113,10 @@
             <label>Auto-Reload (Hours)</label>
             <input type="number" id="reload_h" value="12">
         </div>
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="is_test">
+            <label for="is_test" style="margin-bottom:0; cursor:pointer;">Use Test Version (test.html)</label>
+        </div>
     </div>
 
     <div class="btn-container">
@@ -117,68 +125,18 @@
 </div>
 
 <script>
-    // Material Design 500 Colors
-    const materialColors = [
-        "#F44336", // Red
-        "#E91E63", // Pink
-        "#9C27B0", // Purple
-        "#673AB7", // Deep Purple
-        "#3F51B5", // Indigo
-        "#2196F3", // Blue
-        "#03A9F4", // Light Blue
-        "#00BCD4", // Cyan
-        "#009688", // Teal
-        "#4CAF50", // Green
-        "#FFC107", // Amber
-        "#FF9800"  // Orange
-    ];
+    const materialColors = ["#F44336", "#E91E63", "#9C27B0", "#673AB7", "#3F51B5", "#2196F3", "#03A9F4", "#00BCD4", "#009688", "#4CAF50", "#FFC107", "#FF9800"];
 
     const presets = [
-        { 
-            name: "Multi-Random", 
-            desc: "2 random pics, date on, 1hr reload", 
-            vals: { bg_img: 'https://picsum.photos/1920/1080?random=1', bg_mode: 'cover', bg_img2: 'https://picsum.photos/1920/1080?random=2', bg_mode2: 'cover', date: 'show', reload_h: '1' } 
-        },
-        { 
-            name: "Pexels & Linen", 
-            desc: "Nature + Texture blend, 2hr reload", 
-            vals: { bg_img: 'https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg', bg_mode: 'cover', bg_img2: 'https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png', bg_mode2: 'tile', date: 'show', reload_h: '2' } 
-        },
-        { 
-            name: "ImageIpsum", 
-            desc: "Clean random imagery, date on", 
-            vals: { bg_img: 'http://imageipsum.com/1920x1080', bg_mode: 'cover', date: 'show', reload_h: '1' } 
-        },
-        { 
-            name: "Gif Clock", 
-            desc: "Multi-bg with animated clock face", 
-            vals: { bg_img: 'https://picsum.photos/1920/1080?random=1', bg_mode: 'cover', bg_img2: 'https://picsum.photos/1920/1080?random=2', bg_mode2: 'cover', date: 'hide', reload_h: '1', clock_bg_img: 'https://gifroz.vercel.app', blur: '2', clock_bg_mode: 'cover' } 
-        },
-        { 
-            name: "Mac OS Default", 
-            desc: "Pexels Landscape, cover mode", 
-            vals: { bg_img: 'https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg', bg_mode: 'cover', date: 'show' } 
-        },
-        { 
-            name: "iPad iOS 13", 
-            desc: "Classic iPad wallpaper, centered", 
-            vals: { bg_img: 'https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ispazio-13.jpg', bg_mode: 'center', date: 'show' } 
-        },
-        { 
-            name: "Sequoia", 
-            desc: "Modern Mac OS Light, cover", 
-            vals: { bg_img: 'https://wallpapers.ispazio.net/wp-content/uploads/2024/06/SequoiaLight.png', bg_mode: 'cover', date: 'show' } 
-        },
-        { 
-            name: "Grey Linen", 
-            desc: "Classic Apple texture, tiled", 
-            vals: { bg_img: 'https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png', bg_mode: 'tile', date: 'hide', blur: '1' } 
-        },
-        { 
-            name: "iPhone iOS 15", 
-            desc: "Dark stock wallpaper, tiled", 
-            vals: { bg_img: 'https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ios-15-stock-wallapper-from-ispazio-dark.png', bg_mode: 'tile', date: 'show' } 
-        }
+        { name: "Multi-Random", desc: "2 random pics, date on, 1hr reload", vals: { bg_img: 'https://picsum.photos/1920/1080?random=1', bg_mode: 'cover', bg_img2: 'https://picsum.photos/1920/1080?random=2', bg_mode2: 'cover', date: 'show', reload_h: '1' } },
+        { name: "Pexels & Linen", desc: "Nature + Texture blend, 2hr reload", vals: { bg_img: 'https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg', bg_mode: 'cover', bg_img2: 'https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png', bg_mode2: 'tile', date: 'show', reload_h: '2' } },
+        { name: "ImageIpsum", desc: "Clean random imagery, date on", vals: { bg_img: 'http://imageipsum.com/1920/1080', bg_mode: 'cover', date: 'show', reload_h: '1' } },
+        { name: "Gif Clock", desc: "Multi-bg with animated clock face", vals: { bg_img: 'https://picsum.photos/1920/1080?random=1', bg_mode: 'cover', bg_img2: 'https://picsum.photos/1920/1080?random=2', bg_mode2: 'cover', date: 'hide', reload_h: '1', clock_bg_img: 'https://gifroz.vercel.app', blur: '2', clock_bg_mode: 'cover' } },
+        { name: "Mac OS Default", desc: "Pexels Landscape, cover mode", vals: { bg_img: 'https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg', bg_mode: 'cover', date: 'show' } },
+        { name: "iPad iOS 13", desc: "Classic iPad wallpaper, centered", vals: { bg_img: 'https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ispazio-13.jpg', bg_mode: 'center', date: 'show' } },
+        { name: "Sequoia", desc: "Modern Mac OS Light, cover", vals: { bg_img: 'https://wallpapers.ispazio.net/wp-content/uploads/2024/06/SequoiaLight.png', bg_mode: 'cover', date: 'show' } },
+        { name: "Grey Linen", desc: "Classic Apple texture, tiled", vals: { bg_img: 'https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png', bg_mode: 'tile', date: 'hide', blur: '1' } },
+        { name: "iPhone iOS 15", desc: "Dark stock wallpaper, tiled", vals: { bg_img: 'https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ios-15-stock-wallapper-from-ispazio-dark.png', bg_mode: 'tile', date: 'show' } }
     ];
 
     const grid = document.getElementById('presetGrid');
@@ -186,10 +144,7 @@
     presets.forEach((p, index) => {
         const item = document.createElement('div');
         item.className = 'preset-item';
-        
-        // Pick a color from the material list (cycles back to 0 if we exceed list length)
         const iconColor = materialColors[index % materialColors.length];
-        
         item.onclick = () => applyPreset(index, item);
         item.innerHTML = `
             <div class="preset-icon" style="background-color: ${iconColor};">${index + 1}</div>
@@ -200,28 +155,24 @@
     });
 
     function applyPreset(index, element) {
-        // Reset defaults
-        document.querySelectorAll('input').forEach(i => i.value = "");
+        document.querySelectorAll('input:not([type="checkbox"])').forEach(i => i.value = "");
         document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
         document.getElementById('blur').value = "15";
         document.getElementById('reload_h').value = "12";
         document.getElementById('bg').value = "#000000";
 
-        // Apply specific preset data
         const data = presets[index].vals;
         for (let key in data) {
             const el = document.getElementById(key);
             if (el) el.value = data[key];
         }
 
-        // Handle active state UI
         document.querySelectorAll('.preset-item').forEach(i => i.classList.remove('active'));
         element.classList.add('active');
         
-        // Bonus: Change the "Go" button to match the preset color
         const color = materialColors[index % materialColors.length];
         document.getElementById('go').style.backgroundColor = color;
-        document.getElementById('go').style.boxShadow = `0 10px 20px ${color}44`; // 44 is hex transparency
+        document.getElementById('go').style.boxShadow = `0 10px 20px ${color}44`;
     }
 
     function launch() {
@@ -233,7 +184,11 @@
             if (val) params.append(f, val);
         });
 
-        window.location.href = `10th-clockblur.html?${params.toString()}`;
+        // Toggle logic based on checkbox
+        const isTest = document.getElementById('is_test').checked;
+        const targetPage = isTest ? 'test.html' : '10th-clockblur.html';
+
+        window.location.href = `${targetPage}?${params.toString()}`;
     }
 </script>
 
