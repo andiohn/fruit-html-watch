@@ -3,7 +3,7 @@ HTML Watch recreation of a fruit smartwatch, WITH burn in prevention.
 
 This is a recreation of a certain companies' smart watch but with some fun additions.
 
-# New! Go to https://andiohn.github.io/fruit-html-watch/ to configure!
+# New! Go to [https://andiohn.github.io/fruit-html-watch/](https://andiohn.github.io/fruit-html-watch/) to use!
 
 1. Liquid Glass background
 2. Can use any image URL as the background by passing in a url flag, along with tile, cover and center modes
