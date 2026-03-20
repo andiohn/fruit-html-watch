@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Watch Configurator</title>
+    <style>
+        :root { --primary: #007aff; --bg: #121212; --card: #1e1e1e; --text: #ffffff; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
+        .container { max-width: 800px; width: 100%; }
+        h1 { margin-bottom: 30px; font-weight: 300; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .section { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .section h2 { grid-column: 1 / -1; margin-top: 0; font-size: 1.2rem; color: #aaa; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-size: 0.85rem; margin-bottom: 8px; color: #888; }
+        input, select { background: #2c2c2e; border: 1px solid #3a3a3c; color: white; padding: 10px; border-radius: 6px; font-size: 0.9rem; }
+        .full-width { grid-column: 1 / -1; }
+        button#go { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 8px; color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        button#go:hover { background: #0063d1; }
+        button#go:active { transform: scale(0.98); }
+        .preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 20px; }
+        .preset-card { background: #2c2c2e; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; text-align: center; border: 1px solid transparent; }
+        .preset-card:hover { border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Watch Settings</h1>
+
+    <div class="section">
+        <h2>Primary Background</h2>
+        <div class="input-group full-width">
+            <label>Background Image URL (bg_img)</label>
+            <input type="text" id="bg_img" placeholder="https://...">
+        </div>
+        <div class="input-group">
+            <label>Display Mode (bg_mode)</label>
+            <select id="bg_mode">
+                <option value="cover">Cover</option>
+                <option value="center" selected>Center</option>
+                <option value="tile">Tile</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Secondary Background (Optional)</h2>
+        <div class="input-group full-width">
+            <label>Second Image URL (bg_img2)</label>
+            <input type="text" id="bg_img2" placeholder="https://...">
+        </div>
+        <div class="input-group">
+            <label>Display Mode (bg_mode2)</label>
+            <select id="bg_mode2">
+                <option value="cover">Cover</option>
+                <option value="center" selected>Center</option>
+                <option value="tile">Tile</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Clock Overlay & Face</h2>
+        <div class="input-group">
+            <label>Clock Face Color (bg)</label>
+            <input type="color" id="bg" value="#000000">
+        </div>
+        <div class="input-group">
+            <label>Date Visibility (date)</label>
+            <select id="date">
+                <option value="hide" selected>Hide</option>
+                <option value="show">Show</option>
+            </select>
+        </div>
+        <div class="input-group full-width">
+            <label>Internal Clock Background (clock_bg_img)</label>
+            <input type="text" id="clock_bg_img" placeholder="e.g. https://gifroz.vercel.app">
+        </div>
+        <div class="input-group">
+            <label>Clock Image Mode (clock_bg_mode)</label>
+            <select id="clock_bg_mode">
+                <option value="cover">Cover</option>
+                <option value="center" selected>Center</option>
+                <option value="tile">Tile</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Blur Amount (blur)</label>
+            <input type="number" id="blur" value="15">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>System</h2>
+        <div class="input-group">
+            <label>Auto-Reload (Hours)</label>
+            <input type="number" id="reload_h" value="12">
+        </div>
+    </div>
+
+    <button id="go" onclick="generateURL()">DISPLAY MY WATCH</button>
+
+    <h3 style="margin-top: 40px; color: #888; font-weight: 400;">Quick Presets</h3>
+    <div class="preset-grid">
+        <div class="preset-card" onclick="setPreset('mac')">Mac OS Sequoia</div>
+        <div class="preset-card" onclick="setPreset('random')">Random Multi-Image</div>
+        <div class="preset-card" onclick="setPreset('linen')">Classic Grey Linen</div>
+    </div>
+</div>
+
+<script>
+    function generateURL() {
+        const params = new URLSearchParams();
+        
+        // Define all the flags we want to capture
+        const flags = [
+            'bg_img', 'bg_mode', 'bg_img2', 'bg_mode2', 
+            'bg', 'date', 'reload_h', 'clock_bg_img', 
+            'clock_bg_mode', 'blur'
+        ];
+
+        flags.forEach(flag => {
+            const el = document.getElementById(flag);
+            if (el && el.value) {
+                // Only add if it's not the default or empty
+                params.append(flag, el.value);
+            }
+        });
+
+        // Use the relative path to your clock file
+        const finalURL = `10th-clockblur.html?${params.toString()}`;
+        window.location.href = finalURL;
+    }
+
+    // Helper for your presets
+    function setPreset(type) {
+        if (type === 'mac') {
+            document.getElementById('bg_img').value = 'https://wallpapers.ispazio.net/wp-content/uploads/2024/06/SequoiaLight.png';
+            document.getElementById('bg_mode').value = 'cover';
+            document.getElementById('date').value = 'show';
+        } else if (type === 'random') {
+            document.getElementById('bg_img').value = 'https://picsum.photos/1920/1080?random=1';
+            document.getElementById('bg_img2').value = 'https://picsum.photos/1920/1080?random=2';
+            document.getElementById('bg_mode').value = 'cover';
+            document.getElementById('bg_mode2').value = 'cover';
+            document.getElementById('reload_h').value = '1';
+        } else if (type === 'linen') {
+            document.getElementById('bg_img').value = 'https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png';
+            document.getElementById('bg_mode').value = 'tile';
+            document.getElementById('date').value = 'hide';
+        }
+    }
+</script>
+
+</body>
+</html>
