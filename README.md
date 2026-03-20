@@ -4,6 +4,7 @@ HTML Watch recreation of a fruit smartwatch, WITH burn in prevention.
 This is a recreation of a certain companies' smart watch but with some fun additions.
 
 # New! Go to [andiohn.github.io/fruit-html-watch](https://andiohn.github.io/fruit-html-watch/) to use!
+The new configuration app here can be installed on your device and it works better this way too. It's a Progressive Web App.
 
 1. Liquid Glass background
 2. Can use any image URL as the background by passing in a url flag, along with tile, cover and center modes
@@ -36,7 +37,7 @@ EXAMPLES(Preview):
 
 |Descriptions|Link|
 |-|-|
-|**MULTI** - Using 2 randoms (on each load!) from https://picsum.photos/ date on, 1 hour reload, cover image|https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/10th-clockblur.html&bg_img=https://picsum.photos/1920/1080?random=1&bg_mode=cover&bg_img2=https://picsum.photos/1920/1080?random=2&bg_mode2=cover&date=show&reload_h=1|
+|**MULTI** - Using 2 randoms (on each load!) from https://picsum.photos/ date on, 1 hour reload, cover image|Preset 1|
 |**MULTI** - Example 1 and Grey Linen, date on, reload 2 hour, cover image|https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/10th-clockblur.html&bg_img=https://images.pexels.com/photos/11177799/pexels-photo-11177799.jpeg&bg_mode=cover&bg_img2=https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png&bg_mode2=tile&date=show&reload_h=2|
 |1 Hour Reload Random image from imageipsum.com, 1920x1080,cover,date on|https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/10th-clockblur.html&bg_img=http://imageipsum.com/1920x1080&bg_mode=cover&date=show&reload_h=1|
 |_Stupid_ 1 Hour RANDOM gif bg from Onyx-Nostalgia/gifroz,center,date off|https://htmlpreview.github.io/?https://github.com/andiohn/fruit-html-watch/blob/main/10th-clockblur.html&bg_img=https://gifroz.vercel.app&bg_mode=center&date=hide&reload_h=1&blur=1|
