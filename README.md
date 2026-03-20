@@ -33,7 +33,7 @@ URL Flags
 |?clock_bg_mode=|tile, center, cover|How the clock background image is displayed.|center|
 |?blur=|# of blur|Amount of clock background blur, good with gif backgrounds...|15|
 
-EXAMPLES(Preview):
+EXAMPLES(Presets):
 
 |Descriptions|Link|
 |-|-|
@@ -46,4 +46,4 @@ EXAMPLES(Preview):
 |iPad iOS 13 Image background, date on, center image|[Preset 7](https://andiohn.github.io/fruit-html-watch/watch.html?bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ispazio-13.jpg&bg_mode=center&date=show)|
 |Mac OS Sequoia (Large) background, date on, cover image|[Preset 8](https://andiohn.github.io/fruit-html-watch/watch.html?bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2024/06/SequoiaLight.png&bg_mode=cover&date=show)|
 |Classic Mac OS Grey Linen background, date off|[Preset 9](https://andiohn.github.io/fruit-html-watch/watch.html?bg_img=https://cdn.osxdaily.com/wp-content/uploads/2011/10/NSTexturedFullScreenBackgroundColor.png&bg_mode=tile&date=hide)|
-|iPhone Background, date on, tile image|[Preset 10](https://andiohn.github.io/fruit-html-watch/watch.html?bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ios-15-stock-wallapper-from-ispazio-dark.png&bg_mode=tile&date=show)|
+|iPhone Background, date on, tile image|[Preset 10](https://andiohn.github.io/fruit-html-watch/watch.html?bg_img=https://wallpapers.ispazio.net/wp-content/uploads/2021/06/ios-15-stock-wallapper-from-ispazio-dark.png&bg_mode=cover&date=show)|
