@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Fruit Watch Configurator</title>
     
     <link rel="manifest" href="manifest.json">
@@ -13,7 +13,7 @@
 
     <style>
         :root { --primary: #007aff; --bg: #000000; --card: #1c1c1e; --text: #ffffff; --secondary-text: #8e8e93; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box;}
         .container { max-width: 900px; width: 100%; }
         
         h1 { font-weight: 600; letter-spacing: -0.5px; margin-bottom: 30px; }
