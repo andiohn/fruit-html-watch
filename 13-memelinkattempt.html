@@ -216,20 +216,20 @@
 </a>
 
 <script>
-    // Memegen Registry Dataset (Array of [id, lineCount, isAnimated, defaultTopText])
+    // --- Memegen Helper & Evaluator ---
     const RAW_REGISTRY = [
         ["3hd",3,0,"Pepperoni/Mushroom"],["aag",2,0,"_"],["ackbar",2,0,"_"],["afraid",2,0,"i_don't_know_what_this_meme_is_for"],["agnes",2,0,"_"],
         ["aint-got-time",2,0,"memes~q"],["ams",2,0,"when_you're_watching_a_movie"],["ants",2,0,"do_you_want_ants~q"],["apcr",2,0,"I_supported_my_sister's_abortion"],
         ["astronaut",4,0,"Wait,_it's_round~q/Always_has_been/Flat_Earther"],["atis",2,0,"and_then_i_said"],["away",2,0,"life..."],["awesome",2,0,"say_a_word_wrong"],
         ["awesome-awkward",2,0,"first_day_at_new_job"],["awkward",2,0,"start_telling_joke"],["awkward-awesome",2,0,"trip_guy_on_the_street"],["bad",2,0,"your_meme_is_bad"],
         ["badchoice",2,0,"milk"],["balloon",3,0,"Opportunities/Opportunities"],["bd",2,0,"can't_workout"],
-        ["because",2,0,"Just_because_you_see_a_Black_man_driving_in_a_nice_car..._does_not_mean_it's_stolen."],["bender",2,0,"i'm_going_to_build_my_own_theme_park"],
+        ["because",2,0,"Just_because_you_see_a_Black_man_driving_in_a_nice_car..._does_not_mean_it's_stolen."],["bender",2,0,"i_going_to_build_my_own_theme_park"],
         ["bihw",2,0,"it_ain't_much"],["bilbo",2,0,"After_all..._why_not~q"],["biw",2,0,"gets_iced_coffee"],["blb",2,0,"falls_asleep_in_class"],["boat",2,0,"_"],
         ["bongo",2,1,"Any_sound_when_you're_trying_to_sleep"],["both",2,1,"hard_or_soft_tacos"],["box",2,1,"_"],["bs",2,0,"what_a_surprise..."],
         ["bus",2,0,"Postseason"],["buzz",2,1,"memes"],["cake",2,1,"_"],["captain",2,0,"look_at_me"],["captain-america",3,0,"Have_you_ever_eaten_a_clock~q/No,_why~q"],
         ["cb",2,0,"i_stole"],["cbb",2,0,"_"],["cbg",2,0,"_"],["center",2,0,"what_is_this"],["ch",2,0,"if_you_wanted_to_avoid_the_friend_zone"],
         ["chair",6,0,"Let's_expand_safety_nets/Socialism_never_works!/Scandinavia_is_socialist_and_they're_doing_great!/They're_not_socialist._They're_capitalist_with_strong_welfare_policies!/Then_let's_adopt_those!"],
-        ["cheems",2,0,"it's_a_good_time_to_sleep"],["chosen",1,0,"_"],["cmm",1,0,"_"],["crying-floor",2,0,"lie_down"],["crowd",2,1,"Push_to_CI"],
+        ["cheems",2,0,"it's_a_good_time_to_sleep"],["chosen",1,0,"_"],["cmm",1,0,"_"],["cryingfloor",2,0,"lie_down"],["crowd",2,1,"Push_to_CI"],
         ["db",3,0,"Socialism/The_Youth"],["dg",2,0,"_"],["disastergirl",2,0,"_"],["dodgson",2,1,"we've_got_dodgson_here!"],["doge",2,0,"such_meme"],
         ["drake",2,0,"left_on_unread"],["drowning",3,0,"Me_Asking_for_Help/Online_Commenter"],["dwight",2,0,"love_is_all_you_need~q"],
         ["elmo",5,0,"Historical_Accuracy/History_Channel/Aliens/Historical_Accuracy"],["ermg",2,0,"ermahgerd"],["fa",2,0,"forever_alone"],["facepalm",2,0,"_"],
@@ -238,29 +238,21 @@
         ["harold",2,0,"when_boss_sees"],["headaches",1,0,"_"],["iw",2,0,"_"],["jd",2,0,"_"],["joker",2,0,"_"],["jw",2,0,"_"],["kermit",2,0,"_"],
         ["khaby-lame",2,0,"Bad_mood~q"],["kk",2,0,"_"],["kombucha",2,0,"trying_something_new"],["leo",2,0,"I_have_no_idea"],["live",2,1,"_"],["ll",2,0,"_"],
         ["mb",2,1,"'member"],["mini-keanu",2,0,"waiting_for_mom"],["mma",2,0,"what_if_i_told_you"],["money",2,1,"shut_up_and"],["mordor",2,0,"one_does_not_simply"],
-        ["morpheus",2,0,"what_if_i_told_you"],["mw",2,0,"_"],["nice",2,0,"which_is_nice"],["noea",2,0,"_"],["oag",2,0,"i_know_you're_reading"],["offended",2,0,"_"],
+        ["morpheus",2,0,"what_if_i_told_you"],["mw",2,0,"_"],["nice",2,0,"which_is_nice"],["noea",2,0,"_"],["oag",2,0,"i_know_you_received_my_email"],["offended",2,0,"_"],
         ["omg",2,0,"_"],["oprah",2,1,"you_get"],["patrick",2,1,"why_don't_we_take_all_memes"],["persian",2,0,"what_is_this"],["pigeon",3,0,"Engineer/PowerPoint"],
         ["pooh",2,0,"Burger_King"],["popcat",2,0,"pop"],["prop3",1,0,"_"],["rollsafe",2,1,"can't_get_fired"],["sad-biden",2,0,"_"],["sadfrog",2,0,"_"],
-        ["saltbae",2,0,"_"],["sarcasticbear",2,0,"_"],["sb",2,0,"borrows_car"],["sdb",2,0,"_"],["should",2,0,"_"],["ski",2,0,"the_rent_is_too_damn_high"],
+        ["saltbae",2,0,"_"],["sarcasticbear",2,0,"_"],["sb",2,0,"borrows_car"],["sdb",2,0,"_"],["should",2,0,"_"],["ski",2,0,"you're_gonna_have_a_bad_time"],
         ["sneeze",2,0,"holding_a_fart"],["sohere",2,0,"_"],["sohot",2,0,"memes"],["sparta",2,0,"_"],["spongebob",2,0,"BF:_I_don't_even_know_her"],["ss",2,0,"_"],
         ["staring",2,0,"_"],["stop",2,0,"_"],["success",2,0,"don't_know_a_question"],["tasty",2,0,"_"],["toohigh",2,0,"_"],["touch",2,0,"_"],
         ["trump",2,0,"this_is_the_best_meme"],["waygd",2,1,"yeah..."],["wishes",1,0,"_"],["woman-cat",2,0,"Mom_telling_me_how_useless_I_am"],["wonka",2,0,"oh_you_just_graduated"],
         ["yaoming",2,0,"_"],["yallgot",2,0,"y'all_got_any_more_of_them"],["yodawg",2,0,"_"],["yuno",2,0,"Y_U_NO"],["zero-wing",1,0,"_"]
     ];
 
-    const MEMEGEN_REGISTRY = RAW_REGISTRY.map(t => ({
-        id: t[0], lines: t[1], animated: t[2] === 1, top: t[3]
-    }));
+    const MEMEGEN_REGISTRY = RAW_REGISTRY.map(t => ({ id: t, lines: t[1], animated: t[2] === 1, top: t[3] }));
 
     function sanitizeMemeText(text) {
         if (!text || text === "_") return "_";
-        return text
-            .replace(/\?/g, "~q")
-            .replace(/%/g, "~p")
-            .replace(/#/g, "~h")
-            .replace(/\//g, "~s")
-            .replace(/\s+/g, "_")
-            .replace(/-+/g, "--");
+        return text.replace(/\?/g, "~q").replace(/%/g, "~p").replace(/#/g, "~h").replace(/\//g, "~s").replace(/\s+/g, "_").replace(/-+/g, "--");
     }
 
     function getCurrentDateMemeStr() {
@@ -270,7 +262,8 @@
     }
 
     function resolveMemegenFlag(val) {
-        if (!val || typeof val !== 'string' || !val.includes("memegen_random")) return val;
+        if (!val || typeof val !== 'string') return val;
+        if (!val.includes("memelink") && !val.includes("memegen")) return val;
 
         const isAnimated = val.includes("animated");
         const isStatic = val.includes("static");
@@ -282,7 +275,6 @@
         } else if (isStatic) {
             pool = MEMEGEN_REGISTRY.filter(t => !t.animated);
         }
-
         if (pool.length === 0) pool = MEMEGEN_REGISTRY;
 
         const choice = pool[Math.floor(Math.random() * pool.length)];
@@ -304,178 +296,233 @@
         return `https://api.memegen.link/images/${choice.id}/${urlParts.join("/")}.${ext}`;
     }
 
-    // --- URL Query Parameter Parsing ---
+    // --- 1. URL Parameter & Color Handling ---
     const urlParams = new URLSearchParams(window.location.search);
-
-    const resolvedBgImg1 = resolveMemegenFlag(urlParams.get('bg_img'));
-    const resolvedBgImg2 = resolveMemegenFlag(urlParams.get('bg_img2'));
-    const resolvedClockBgImg = resolveMemegenFlag(urlParams.get('clock_bg_img'));
-
+    
+    // --- PAGE BACKGROUND VARIABLES (For rotation) ---
     const bgImgData = [
-        { url: resolvedBgImg1, mode: urlParams.get('bg_mode') || 'center' },
-        { url: resolvedBgImg2, mode: urlParams.get('bg_mode2') || 'center' }
+        {
+            url: resolveMemegenFlag(urlParams.get('bg_img')),
+            mode: urlParams.get('bg_mode') || 'center'
+        },
+        {
+            url: resolveMemegenFlag(urlParams.get('bg_img2')),
+            mode: urlParams.get('bg_mode2') || 'center'
+        }
     ];
     const activeBackgrounds = bgImgData.filter(item => item.url);
+    let currentBgIndex = 0;
 
-    const clockBgImg = resolvedClockBgImg;
+    // --- CLOCK BACKGROUND VARIABLES ---
+    const clockBgImg = resolveMemegenFlag(urlParams.get('clock_bg_img'));
     const clockBgMode = urlParams.get('clock_bg_mode') || 'center';
 
-    const bgColorParam = urlParams.get('bg'); 
-    const blurRadiusParam = urlParams.get('blur'); 
-    const dateParam = urlParams.get('date'); 
+    // --- GENERAL VARIABLES ---
+    const bgColor = urlParams.get('bg') || '#000000';
+    const dateFlag = urlParams.get('date');
+    const reloadHours = parseFloat(urlParams.get('reload_h')) || 12;
+    
+    // Blur toggle - Read blur value, default to 15px
+    const blurPixels = parseFloat(urlParams.get('blur')) || 15;
+    document.documentElement.style.setProperty('--clock-blur-radius', `${blurPixels}px`);
 
-    function setClockBackground(url, mode) {
-        const root = document.documentElement;
-        if (url) {
-            root.style.setProperty('--clock-bg-image', `url('${url}')`);
-            root.style.setProperty('--clock-bg-size', mode);
-        } else {
-            root.style.setProperty('--clock-bg-image', 'none');
-        }
+    // Function to convert HEX to RGB for CSS variable
+    function hexToRgb(hex) {
+        const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])\$/i;
+        hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})\$/i.exec(hex);
+        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
     }
 
-    function setBodyBackground(url, mode) {
-        const body = document.body;
-        if (url) {
-            body.style.backgroundImage = `url('${url}')`;
-            body.style.backgroundSize = mode;
-        } else {
-            body.style.backgroundImage = 'none';
-        }
-    }
+    // Apply Clock Face Color (as RGB for opacity and HEX for text contrast)
+    document.documentElement.style.setProperty('--clock-face-color', hexToRgb(bgColor));
+    document.documentElement.style.setProperty('--clock-bg-color', bgColor);
 
-    // Apply Backgrounds
-    setClockBackground(clockBgImg, clockBgMode);
-
-    let currentBgIndex = 0;
-    if (activeBackgrounds.length > 0) {
-        setBodyBackground(activeBackgrounds[0].url, activeBackgrounds[0].mode);
-
-        if (activeBackgrounds.length > 1) {
-            setInterval(() => {
-                currentBgIndex = (currentBgIndex + 1) % activeBackgrounds.length;
-                const nextBg = activeBackgrounds[currentBgIndex];
-                setBodyBackground(nextBg.url, nextBg.mode);
-            }, 10000); 
-        }
-    }
-
-    if (bgColorParam) {
-        const hexColor = bgColorParam.replace('#', '');
-        if (/^[0-9A-Fa-f]{6}\$/.test(hexColor)) {
-            const r = parseInt(hexColor.substring(0, 2), 16);
-            const g = parseInt(hexColor.substring(2, 4), 16);
-            const b = parseInt(hexColor.substring(4, 6), 16);
-            
-            document.documentElement.style.setProperty('--clock-face-color', `${r}, ${g}, ${b}`);
-            
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            const dateDisplay = document.getElementById('date-time');
-            if (luminance > 0.5) {
-                dateDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
-                dateDisplay.style.color = 'white';
-            } else {
-                dateDisplay.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-                dateDisplay.style.color = 'black';
-            }
-        }
-    }
-
-    if (blurRadiusParam !== null && !isNaN(blurRadiusParam)) {
-        document.documentElement.style.setProperty('--clock-blur-radius', `${blurRadiusParam}px`);
-    }
-
-    if (dateParam === 'show') {
+    // Apply Date Visibility
+    if (dateFlag && dateFlag.toLowerCase() === 'show') {
         document.documentElement.style.setProperty('--date-display', 'block');
     }
 
-    // Build Analog Clock Ticks & Numbers
+    // Function to set clock container background
+    function setClockBackground(url, mode) {
+        if (url) {
+            document.documentElement.style.setProperty('--clock-bg-image', `url('${url}')`);
+            
+            let size = 'auto';
+            let repeat = 'no-repeat';
+            let position = 'center';
+
+            if (mode === 'tile') {
+                repeat = 'repeat';
+                size = 'auto';
+            } else if (mode === 'cover') {
+                repeat = 'no-repeat';
+                size = 'cover';
+            }
+            
+            document.documentElement.style.setProperty('--clock-bg-repeat', repeat);
+            document.documentElement.style.setProperty('--clock-bg-size', size);
+            document.documentElement.style.setProperty('--clock-bg-position', position);
+        } else {
+            document.documentElement.style.setProperty('--clock-bg-image', 'none');
+        }
+    }
+    
+    // Apply Clock Background on load
+    setClockBackground(clockBgImg, clockBgMode);
+
+    // Function to set the body (page) background style
+    function setBodyBackground(data) {
+        if (data.url) {
+            document.body.style.backgroundImage = `url('${data.url}')`;
+            if (data.mode === 'tile') {
+                document.body.style.backgroundRepeat = 'repeat';
+                document.body.style.backgroundSize = 'auto';
+                document.body.style.backgroundPosition = '0 0';
+            } else if (data.mode === 'cover') {
+                document.body.style.backgroundRepeat = 'no-repeat';
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+            } else {
+                document.body.style.backgroundRepeat = 'no-repeat';
+                document.body.style.backgroundSize = 'auto';
+                document.body.style.backgroundPosition = 'center';
+            }
+        } else {
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundColor = bgColor;
+        }
+    }
+
+    // --- 2. Element Selectors and Initial Setup (Clock Face) ---
+    const clockContainer = document.getElementById('clock');
     const ticksContainer = document.getElementById('ticks-container');
     const numbersContainer = document.getElementById('numbers-container');
+    const hourHand = document.getElementById('hour');
+    const minuteHand = document.getElementById('minute');
+    const secondHand = document.getElementById('second');
+    const ghLink = document.getElementById('gh-link');
+    const dateTimeElement = document.getElementById('date-time');
+    const radius = 135;
 
     for (let i = 0; i < 60; i++) {
         const tick = document.createElement('div');
-        tick.className = i % 5 === 0 ? 'tick major' : 'tick';
+        tick.classList.add('tick');
+        if (i % 5 === 0) tick.classList.add('major');
         tick.style.transform = `rotate(${i * 6}deg)`;
         ticksContainer.appendChild(tick);
     }
-
     for (let i = 1; i <= 12; i++) {
         const num = document.createElement('div');
-        num.className = 'num';
-        num.textContent = i;
-        const angle = (i * 30) * (Math.PI / 180);
-        const radius = 135; 
-        const x = Math.sin(angle) * radius;
-        const y = -Math.cos(angle) * radius;
+        num.classList.add('num');
+        num.innerText = i;
+        const angle = (i * 30) * (Math.PI / 180); 
+        const x = Math.sin(angle) * radius; 
+        const y = -Math.cos(angle) * radius; 
         num.style.transform = `translate(${x}px, ${y}px)`;
         numbersContainer.appendChild(num);
     }
 
-    const hourHand = document.getElementById('hour');
-    const minuteHand = document.getElementById('minute');
-    const secondHand = document.getElementById('second');
-    const dateTimeDisplay = document.getElementById('date-time');
-
+    // --- 3. Clock Movement Logic ---
     function updateClock() {
         const now = new Date();
         const seconds = now.getSeconds();
+        const milliseconds = now.getMilliseconds();
         const minutes = now.getMinutes();
         const hours = now.getHours();
 
-        const secondDeg = (seconds / 60) * 360;
-        const minuteDeg = ((minutes + seconds / 60) / 60) * 360;
-        const hourDeg = (((hours % 12) + minutes / 60) / 12) * 360;
+        const secondsDegrees = ((seconds + (milliseconds / 1000)) / 60) * 360;
+        const minutesDegrees = ((minutes + seconds / 60) / 60) * 360;
+        const hoursDegrees = ((hours + minutes / 60) / 12) * 360;
 
-        secondHand.style.transform = `rotate(${secondDeg}deg)`;
-        minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
-        hourHand.style.transform = `rotate(${hourDeg}deg)`;
+        secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+        minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+        hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+        
+        if (seconds === 0) {
+            updateDateDisplay(now);
+        }
 
-        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        dateTimeDisplay.textContent = `${days[now.getDay()]} ${now.getDate()}`;
+        requestAnimationFrame(updateClock);
     }
 
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // Burn-in Prevention Shift
-    const clock = document.getElementById('clock');
-    let moveCount = 0;
-
-    function moveClock() {
-        clock.classList.add('hidden');
+    function updateDateDisplay(now) {
+        const dayOptions = { weekday: 'short' };
+        const dateOptions = { day: 'numeric' };
         
-        setTimeout(() => {
-            const maxOffset = 15; 
-            const randomX = (Math.random() * (maxOffset * 2)) - maxOffset;
-            const randomY = (Math.random() * (maxOffset * 2)) - maxOffset;
-            
-            clock.style.transform = `translate(calc(-50% + ${randomX}px), calc(-50% + ${randomY}px))`;
-            
-            const link = document.getElementById('gh-link');
-            if (moveCount % 2 === 0) {
-                link.classList.remove('pos-right');
-                link.classList.add('pos-left');
-            } else {
-                link.classList.remove('pos-left');
-                link.classList.add('pos-right');
-            }
-            link.style.opacity = '1';
+        const day = now.toLocaleDateString(undefined, dayOptions).toUpperCase();
+        const date = now.toLocaleDateString(undefined, dateOptions);
 
-            clock.classList.remove('hidden');
-            moveCount++;
+        dateTimeElement.textContent = `${day} ${date}`;
+    }
+
+    updateDateDisplay(new Date());
+    requestAnimationFrame(updateClock);
+
+    // --- 4. Clock Burn-in Logic (Every 60s) ---
+    function moveClock() {
+        clockContainer.classList.add('hidden');
+        setTimeout(() => {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const clockSize = 350;
+            
+            const randomX = Math.random() * (screenWidth - clockSize);
+            const randomY = Math.random() * (screenHeight - clockSize);
+
+            clockContainer.style.transform = 'none'; 
+            clockContainer.style.left = `${randomX}px`;
+            clockContainer.style.top = `${randomY}px`;
+            clockContainer.classList.remove('hidden');
         }, 1500); 
     }
+    setInterval(moveClock, 60000);
 
-    setInterval(moveClock, 60000); 
-    setTimeout(moveClock, 1000);
+    // --- 5. Page Image Rotation Logic (Every 10 minutes) ---
+    const TEN_MINUTES = 10 * 60 * 1000;
+    
+    if (activeBackgrounds.length > 1) {
+        setBodyBackground(activeBackgrounds[currentBgIndex]);
 
-    // Auto Reload Interval
-    const reloadParam = urlParams.get('reload_h');
-    let reloadHours = parseFloat(reloadParam);
-    if (isNaN(reloadHours) || reloadHours <= 0) reloadHours = 12; 
-    setTimeout(() => { window.location.reload(); }, reloadHours * 3600 * 1000);
+        setInterval(() => {
+            currentBgIndex = (currentBgIndex + 1) % activeBackgrounds.length;
+            setBodyBackground(activeBackgrounds[currentBgIndex]);
+        }, TEN_MINUTES);
+    } else if (activeBackgrounds.length === 1) {
+        setBodyBackground(activeBackgrounds);
+    } else {
+         setBodyBackground({});
+    }
+
+    // --- 6. Footer Link Logic (Every 5 minutes) ---
+    const FIVE_MINUTES = 5 * 60 * 1000; 
+
+    setTimeout(() => {
+        ghLink.style.opacity = '1';
+        setInterval(() => {
+            if (ghLink.classList.contains('pos-left')) {
+                ghLink.classList.remove('pos-left');
+                ghLink.classList.add('pos-right');
+            } else {
+                ghLink.classList.remove('pos-right');
+                ghLink.classList.add('pos-left');
+            }
+        }, FIVE_MINUTES);
+    }, FIVE_MINUTES);
+
+    // --- 7. Page Reload Logic (Custom Hours) ---
+    if (reloadHours > 0) {
+        const reloadTimeMs = reloadHours * 60 * 60 * 1000;
+
+        console.log(`Scheduling full page reload in ${reloadHours} hours (${reloadTimeMs}ms).`);
+        setTimeout(() => {
+            console.log("Custom reload timeout reached. Reloading page.");
+            location.reload(true); 
+        }, reloadTimeMs); 
+    } else {
+        console.log("Automatic page reload is disabled.");
+    }
+
 </script>
-
 </body>
 </html>
