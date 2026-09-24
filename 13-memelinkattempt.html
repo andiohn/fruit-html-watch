@@ -6,11 +6,13 @@
     <title>Fruit HTML Watch</title>
     <style>
         :root {
-            --clock-face-color: 0, 0, 0;
+            /* Clock Colors & Blurs */
+            --clock-face-color: 0, 0, 0; /* Default Black RGB */
             --clock-opacity: 0.25; 
             --clock-blur-radius: 15px;
-            --date-display: none;
+            --date-display: none; /* Hide date by default */
             
+            /* CSS Variables for Clock Background */
             --clock-bg-image: none;
             --clock-bg-repeat: no-repeat;
             --clock-bg-size: auto;
@@ -26,6 +28,7 @@
             font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: white;
             
+            /* Dynamic Page Background Setup */
             background-image: none;
             background-position: center;
             background-repeat: no-repeat;
@@ -36,48 +39,67 @@
             transition: background-image 2s ease-in-out, background-color 2s ease-in-out, background-size 0.5s ease;
         }
 
+        /* --- Main Clock Wrapper (Positioning and Boundary) --- */
         .clock-container {
             position: absolute;
             width: 350px;
             height: 350px;
             border-radius: 50%;
             overflow: hidden; 
+            
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            
             opacity: 1;
             transition: opacity 1.5s ease-in-out;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
         
+        /* --- CLOCK BACKGROUND OVERLAY (THE IMAGE) --- */
         .background-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            
             background-image: var(--clock-bg-image);
             background-repeat: var(--clock-bg-repeat);
             background-size: var(--clock-bg-size);
             background-position: var(--clock-bg-position);
         }
 
+        /* --- LIQUID GLASS BLUR LAYER --- */
         .liquid-glass-layer {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
-            z-index: 5;
+            z-index: 5; /* Sit below the ticks and hands, but above the background */
+
+            /* Apply filter and transparent background color */
             background-color: rgba(var(--clock-face-color), var(--clock-opacity));
             backdrop-filter: blur(var(--clock-blur-radius));
             -webkit-backdrop-filter: blur(var(--clock-blur-radius));
         }
 
-        .clock-container.hidden { opacity: 0; }
+        .clock-container.hidden {
+            opacity: 0;
+        }
         
+        /* --- Date Complication --- */
         .date-display {
             display: var(--date-display);
             position: absolute;
-            top: 75px; left: 50%;
+            top: 75px;
+            left: 50%;
             transform: translateX(-50%);
-            z-index: 15;
+            z-index: 15; /* Above liquid glass layer */
             text-align: center;
+            
             background: rgba(255, 255, 255, 0.95);
             color: var(--clock-bg-color, black);
             padding: 4px 8px;
@@ -88,12 +110,15 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
         }
 
+        /* --- Clock Face Elements --- */
         .ticks { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; }
         .tick {
             position: absolute;
             background: rgba(255, 255, 255, 0.4);
-            width: 2px; height: 10px;
-            top: 0; left: 50%;
+            width: 2px;
+            height: 10px;
+            top: 0;
+            left: 50%;
             transform-origin: center 175px;
             margin-left: -1px;
         }
@@ -101,31 +126,45 @@
         .numbers { position: absolute; width: 100%; height: 100%; z-index: 10; }
         .num {
             position: absolute;
-            width: 40px; height: 40px;
-            text-align: center; line-height: 40px;
-            font-size: 32px; font-weight: 500;
-            left: 50%; top: 50%;
-            margin-left: -20px; margin-top: -20px;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 32px;
+            font-weight: 500;
+            left: 50%;
+            top: 50%;
+            margin-left: -20px;
+            margin-top: -20px;
         }
         .hand {
             position: absolute;
-            left: 50%; bottom: 50%;
+            left: 50%;
+            bottom: 50%;
             transform-origin: bottom center;
-            border-radius: 10px; z-index: 10;
+            border-radius: 10px;
+            z-index: 10;
         }
         .hour-hand { width: 8px; height: 80px; background: #ffffff; margin-left: -4px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
         .minute-hand { width: 6px; height: 120px; background: #ffffff; margin-left: -3px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
         .second-hand { width: 2px; height: 140px; background: #ff9500; margin-left: -1px; z-index: 11; }
         .second-hand::after {
-            content: ''; position: absolute;
-            width: 8px; height: 8px;
-            background: #ff9500; border-radius: 50%;
-            bottom: -20px; left: 50%; margin-left: -4px;
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff9500;
+            border-radius: 50%;
+            bottom: -20px;
+            left: 50%;
+            margin-left: -4px;
         }
         .center-cap {
             position: absolute;
-            top: 50%; left: 50%;
-            width: 12px; height: 12px;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
             background: rgba(var(--clock-face-color), var(--clock-opacity));
             border: 2px solid #ff9500;
             border-radius: 50%;
@@ -133,13 +172,21 @@
             z-index: 12;
         }
 
+        /* --- Footer Link Styling --- */
         .footer-link {
-            position: fixed; bottom: 30px; opacity: 0;
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; color: rgba(255, 255, 255, 0.75);
-            font-size: 14px; font-weight: 400;
+            position: fixed;
+            bottom: 30px;
+            opacity: 0; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 14px;
+            font-weight: 400;
             transition: opacity 1s ease, left 0.5s ease, right 0.5s ease;
-            z-index: 100; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            z-index: 100;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
         }
         .footer-link:hover { color: rgba(255, 255, 255, 1); }
         .footer-link svg { fill: currentColor; width: 20px; height: 20px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
@@ -169,8 +216,37 @@
 </a>
 
 <script>
-    // Memegen Registry Dataset (Embedded 209 templates)
-    const RAW_REGISTRY = [["3hd",3,0,"Pepperoni/Mushroom"],["aag",2,0,"_"],["ackbar",2,0,"_"],["afraid",2,0,"i_don't_know_what_this_meme_is_for"],["agnes",2,0,"_"],["aint-got-time",2,0,"memes~q"],["ams",2,0,"when_you're_watching_a_movie"],["ants",2,0,"do_you_want_ants~q"],["apcr",2,0,"I_supported_my_sister's_abortion"],["astronaut",4,0,"Wait,_it's_round~q/Always_has_been/Flat_Earther"],["atis",2,0,"and_then_i_said"],["away",2,0,"life..."],["awesome",2,0,"say_a_word_wrong"],["awesome-awkward",2,0,"first_day_at_new_job"],["awkward",2,0,"start_telling_joke"],["awkward-awesome",2,0,"trip_guy_on_the_street"],["bad",2,0,"your_meme_is_bad"],["badchoice",2,0,"milk"],["balloon",3,0,"Opportunities/Opportunities"],["bd",2,0,"can't_workout"],["because",2,0,"Just_because_you_see_a_Black_man_driving_in_a_nice_car..._does_not_mean_it's_stolen."],["bender",2,0,"i'm_going_to_build_my_own_theme_park"],["bihw",2,0,"it_ain't_much"],["bilbo",2,0,"After_all..._why_not~q"],["biw",2,0,"gets_iced_coffee"],["blb",2,0,"falls_asleep_in_class"],["boat",2,0,"_"],["bongo",2,1,"Any_sound_when_you're_trying_to_sleep"],["both",2,1,"hard_or_soft_tacos"],["box",2,1,"_"],["bs",2,0,"what_a_surprise..."],["bus",2,0,"Postseason"],["buzz",2,1,"memes"],["cake",2,1,"_"],["captain",2,0,"look_at_me"],["captain-america",3,0,"Have_you_ever_eaten_a_clock~q/No,_why~q"],["cb",2,0,"i_stole"],["cbb",2,0,"_"],["cbg",2,0,"_"],["center",2,0,"what_is_this"],["ch",2,0,"if_you_wanted_to_avoid_the_friend_zone"],["chair",6,0,"Let's_expand_safety_nets/Socialism_never_works!/Scandinavia_is_socialist_and_they're_doing_great!/They're_not_socialist._They're_capitalist_with_strong_welfare_policies!/Then_let's_adopt_those!"],["cheems",2,0,"it's_a_good_time_to_sleep"],["chosen",1,0,"_"],["cmm",1,0,"_"],["crying-floor",2,0,"lie_down"],["crowd",2,1,"Push_to_CI"],["db",3,0,"Socialism/The_Youth"],["dg",2,0,"_"],["disastergirl",2,0,"_"],["dodgson",2,1,"we've_got_dodgson_here!"],["doge",2,0,"such_meme"],["drake",2,0,"left_on_unread"],["drowning",3,0,"Me_Asking_for_Help/Online_Commenter"],["dwight",2,0,"love_is_all_you_need~q"],["elmo",5,0,"Historical_Accuracy/History_Channel/Aliens/Historical_Accuracy"],["ermg",2,0,"ermahgerd"],["fa",2,0,"forever_alone"],["facepalm",2,0,"_"],["fbf",2,0,"smell_shirt"],["ff",2,0,"wifi_is_slow"],["fine",2,1,"_"],["fmg",2,0,"_"],["fry",2,1,"not_sure_if_trolling"],["fwp",2,0,"wifi_is_slow"],["gdb",2,0,"_"],["gears",2,0,"you_know_what_really_grinds_my_gears~q"],["ggg",2,0,"sees_typo"],["hip",2,0,"_"],["happening",2,1,"_"],["harold",2,0,"when_boss_sees"],["headaches",1,0,"_"],["iw",2,0,"_"],["jd",2,0,"_"],["joker",2,0,"_"],["jw",2,0,"_"],["kermit",2,0,"_"],["khaby-lame",2,0,"Bad_mood~q"],["kk",2,0,"_"],["kombucha",2,0,"trying_something_new"],["leo",2,0,"I_have_no_idea"],["live",2,1,"_"],["ll",2,0,"_"],["mb",2,1,"'member"],["mini-keanu",2,0,"waiting_for_mom"],["mma",2,0,"what_if_i_told_you"],["money",2,1,"shut_up_and"],["mordor",2,0,"one_does_not_simply"],["morpheus",2,0,"what_if_i_told_you"],["mw",2,0,"_"],["nice",2,0,"which_is_nice"],["noea",2,0,"_"],["oag",2,0,"i_know_you're_reading"],["offended",2,0,"_"],["omg",2,0,"_"],["oprah",2,1,"you_get"],["patrick",2,1,"why_don't_we_take_all_memes"],["persian",2,0,"what_is_this"],["pigeon",3,0,"Engineer/PowerPoint"],["pooh",2,0,"Burger_King"],["popcat",2,0,"pop"],["prop3",1,0,"_"],["rollsafe",2,1,"can't_get_fired"],["sad-biden",2,0,"_"],["sadfrog",2,0,"_"],["saltbae",2,0,"_"],["sarcasticbear",2,0,"_"],["sb",2,0,"borrows_car"],["sdb",2,0,"_"],["should",2,0,"_"],["ski",2,0,"the_rent_is_too_damn_high"],["sneeze",2,0,"holding_a_fart"],["sohere",2,0,"_"],["sohot",2,0,"memes"],["sparta",2,0,"_"],["spongebob",2,0,"BF:_I_don't_even_know_her"],["ss",2,0,"_"],["staring",2,0,"_"],["stop",2,0,"_"],["success",2,0,"don't_know_a_question"],["tasty",2,0,"_"],["toohigh",2,0,"_"],["touch",2,0,"_"],["trump",2,0,"this_is_the_best_meme"],["waygd",2,1,"yeah..."],["wishes",1,0,"_"],["woman-cat",2,0,"Mom_telling_me_how_useless_I_am"],["wonka",2,0,"oh_you_just_graduated"],["yaoming",2,0,"_"],["yallgot",2,0,"y'all_got_any_more_of_them"],["yodawg",2,0,"_"],["yuno",2,0,"Y_U_NO"],["zero-wing",1,0,"_"]];
+    // Memegen Registry Dataset (Array of [id, lineCount, isAnimated, defaultTopText])
+    const RAW_REGISTRY = [
+        ["3hd",3,0,"Pepperoni/Mushroom"],["aag",2,0,"_"],["ackbar",2,0,"_"],["afraid",2,0,"i_don't_know_what_this_meme_is_for"],["agnes",2,0,"_"],
+        ["aint-got-time",2,0,"memes~q"],["ams",2,0,"when_you're_watching_a_movie"],["ants",2,0,"do_you_want_ants~q"],["apcr",2,0,"I_supported_my_sister's_abortion"],
+        ["astronaut",4,0,"Wait,_it's_round~q/Always_has_been/Flat_Earther"],["atis",2,0,"and_then_i_said"],["away",2,0,"life..."],["awesome",2,0,"say_a_word_wrong"],
+        ["awesome-awkward",2,0,"first_day_at_new_job"],["awkward",2,0,"start_telling_joke"],["awkward-awesome",2,0,"trip_guy_on_the_street"],["bad",2,0,"your_meme_is_bad"],
+        ["badchoice",2,0,"milk"],["balloon",3,0,"Opportunities/Opportunities"],["bd",2,0,"can't_workout"],
+        ["because",2,0,"Just_because_you_see_a_Black_man_driving_in_a_nice_car..._does_not_mean_it's_stolen."],["bender",2,0,"i'm_going_to_build_my_own_theme_park"],
+        ["bihw",2,0,"it_ain't_much"],["bilbo",2,0,"After_all..._why_not~q"],["biw",2,0,"gets_iced_coffee"],["blb",2,0,"falls_asleep_in_class"],["boat",2,0,"_"],
+        ["bongo",2,1,"Any_sound_when_you're_trying_to_sleep"],["both",2,1,"hard_or_soft_tacos"],["box",2,1,"_"],["bs",2,0,"what_a_surprise..."],
+        ["bus",2,0,"Postseason"],["buzz",2,1,"memes"],["cake",2,1,"_"],["captain",2,0,"look_at_me"],["captain-america",3,0,"Have_you_ever_eaten_a_clock~q/No,_why~q"],
+        ["cb",2,0,"i_stole"],["cbb",2,0,"_"],["cbg",2,0,"_"],["center",2,0,"what_is_this"],["ch",2,0,"if_you_wanted_to_avoid_the_friend_zone"],
+        ["chair",6,0,"Let's_expand_safety_nets/Socialism_never_works!/Scandinavia_is_socialist_and_they're_doing_great!/They're_not_socialist._They're_capitalist_with_strong_welfare_policies!/Then_let's_adopt_those!"],
+        ["cheems",2,0,"it's_a_good_time_to_sleep"],["chosen",1,0,"_"],["cmm",1,0,"_"],["crying-floor",2,0,"lie_down"],["crowd",2,1,"Push_to_CI"],
+        ["db",3,0,"Socialism/The_Youth"],["dg",2,0,"_"],["disastergirl",2,0,"_"],["dodgson",2,1,"we've_got_dodgson_here!"],["doge",2,0,"such_meme"],
+        ["drake",2,0,"left_on_unread"],["drowning",3,0,"Me_Asking_for_Help/Online_Commenter"],["dwight",2,0,"love_is_all_you_need~q"],
+        ["elmo",5,0,"Historical_Accuracy/History_Channel/Aliens/Historical_Accuracy"],["ermg",2,0,"ermahgerd"],["fa",2,0,"forever_alone"],["facepalm",2,0,"_"],
+        ["fbf",2,0,"smell_shirt"],["ff",2,0,"wifi_is_slow"],["fine",2,1,"_"],["fmg",2,0,"_"],["fry",2,1,"not_sure_if_trolling"],["fwp",2,0,"wifi_is_slow"],
+        ["gdb",2,0,"_"],["gears",2,0,"you_know_what_really_grinds_my_gears~q"],["ggg",2,0,"sees_typo"],["hip",2,0,"_"],["happening",2,1,"_"],
+        ["harold",2,0,"when_boss_sees"],["headaches",1,0,"_"],["iw",2,0,"_"],["jd",2,0,"_"],["joker",2,0,"_"],["jw",2,0,"_"],["kermit",2,0,"_"],
+        ["khaby-lame",2,0,"Bad_mood~q"],["kk",2,0,"_"],["kombucha",2,0,"trying_something_new"],["leo",2,0,"I_have_no_idea"],["live",2,1,"_"],["ll",2,0,"_"],
+        ["mb",2,1,"'member"],["mini-keanu",2,0,"waiting_for_mom"],["mma",2,0,"what_if_i_told_you"],["money",2,1,"shut_up_and"],["mordor",2,0,"one_does_not_simply"],
+        ["morpheus",2,0,"what_if_i_told_you"],["mw",2,0,"_"],["nice",2,0,"which_is_nice"],["noea",2,0,"_"],["oag",2,0,"i_know_you're_reading"],["offended",2,0,"_"],
+        ["omg",2,0,"_"],["oprah",2,1,"you_get"],["patrick",2,1,"why_don't_we_take_all_memes"],["persian",2,0,"what_is_this"],["pigeon",3,0,"Engineer/PowerPoint"],
+        ["pooh",2,0,"Burger_King"],["popcat",2,0,"pop"],["prop3",1,0,"_"],["rollsafe",2,1,"can't_get_fired"],["sad-biden",2,0,"_"],["sadfrog",2,0,"_"],
+        ["saltbae",2,0,"_"],["sarcasticbear",2,0,"_"],["sb",2,0,"borrows_car"],["sdb",2,0,"_"],["should",2,0,"_"],["ski",2,0,"the_rent_is_too_damn_high"],
+        ["sneeze",2,0,"holding_a_fart"],["sohere",2,0,"_"],["sohot",2,0,"memes"],["sparta",2,0,"_"],["spongebob",2,0,"BF:_I_don't_even_know_her"],["ss",2,0,"_"],
+        ["staring",2,0,"_"],["stop",2,0,"_"],["success",2,0,"don't_know_a_question"],["tasty",2,0,"_"],["toohigh",2,0,"_"],["touch",2,0,"_"],
+        ["trump",2,0,"this_is_the_best_meme"],["waygd",2,1,"yeah..."],["wishes",1,0,"_"],["woman-cat",2,0,"Mom_telling_me_how_useless_I_am"],["wonka",2,0,"oh_you_just_graduated"],
+        ["yaoming",2,0,"_"],["yallgot",2,0,"y'all_got_any_more_of_them"],["yodawg",2,0,"_"],["yuno",2,0,"Y_U_NO"],["zero-wing",1,0,"_"]
+    ];
 
     const MEMEGEN_REGISTRY = RAW_REGISTRY.map(t => ({
         id: t[0], lines: t[1], animated: t[2] === 1, top: t[3]
@@ -228,6 +304,7 @@
         return `https://api.memegen.link/images/${choice.id}/${urlParts.join("/")}.${ext}`;
     }
 
+    // --- URL Query Parameter Parsing ---
     const urlParams = new URLSearchParams(window.location.search);
 
     const resolvedBgImg1 = resolveMemegenFlag(urlParams.get('bg_img'));
@@ -267,6 +344,7 @@
         }
     }
 
+    // Apply Backgrounds
     setClockBackground(clockBgImg, clockBgMode);
 
     let currentBgIndex = 0;
@@ -311,6 +389,7 @@
         document.documentElement.style.setProperty('--date-display', 'block');
     }
 
+    // Build Analog Clock Ticks & Numbers
     const ticksContainer = document.getElementById('ticks-container');
     const numbersContainer = document.getElementById('numbers-container');
 
@@ -359,6 +438,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // Burn-in Prevention Shift
     const clock = document.getElementById('clock');
     let moveCount = 0;
 
@@ -390,6 +470,7 @@
     setInterval(moveClock, 60000); 
     setTimeout(moveClock, 1000);
 
+    // Auto Reload Interval
     const reloadParam = urlParams.get('reload_h');
     let reloadHours = parseFloat(reloadParam);
     if (isNaN(reloadHours) || reloadHours <= 0) reloadHours = 12; 
