@@ -1,265 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fruit HTML Watch</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body, html {
-      width: 100%; height: 100%;
-      overflow: hidden; background-color: #000;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      display: flex; justify-content: center; align-items: center;
-    }
-    
-    /* Background Image Layers for Burn-in Prevention */
-    .bg-layer {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background-position: center; background-repeat: no-repeat;
-      transition: opacity 1.5s ease-in-out; z-index: 1;
-    }
-    #bg1 { opacity: 1; }
-    #bg2 { opacity: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit HTML Watch</title>
+    <style>
+        :root {
+            --clock-face-color: 0, 0, 0;
+            --clock-opacity: 0.25; 
+            --clock-blur-radius: 15px;
+            --date-display: none;
+            
+            --clock-bg-image: none;
+            --clock-bg-repeat: no-repeat;
+            --clock-bg-size: auto;
+            --clock-bg-position: center;
+        }
 
-    /* Smartwatch Frame & Liquid Glass Face */
-    .watch-container {
-      position: relative; width: 380px; height: 460px;
-      border-radius: 80px; overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.3);
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 2;
-    }
+        body {
+            background-color: #000000; 
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            
+            background-image: none;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: auto;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom);
+            box-sizing: border-box;
+            transition: background-image 2s ease-in-out, background-color 2s ease-in-out, background-size 0.5s ease;
+        }
 
-    /* Clock Background with Blur */
-    #clock-bg {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background-position: center; background-repeat: no-repeat;
-      z-index: 1; filter: blur(15px); transform: scale(1.1);
-    }
+        .clock-container {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            overflow: hidden; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            transition: opacity 1.5s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        .background-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: var(--clock-bg-image);
+            background-repeat: var(--clock-bg-repeat);
+            background-size: var(--clock-bg-size);
+            background-position: var(--clock-bg-position);
+        }
 
-    /* Liquid Glass Overlay Face */
-    .glass-face {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4); z-index: 2;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.7);
-    }
+        .liquid-glass-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%;
+            z-index: 5;
+            background-color: rgba(var(--clock-face-color), var(--clock-opacity));
+            backdrop-filter: blur(var(--clock-blur-radius));
+            -webkit-backdrop-filter: blur(var(--clock-blur-radius));
+        }
 
-    #time { font-size: 5.2rem; font-weight: 700; tracking: -2px; line-height: 1; }
-    #date-display { font-size: 1.2rem; font-weight: 500; margin-top: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
-  </style>
+        .clock-container.hidden { opacity: 0; }
+        
+        .date-display {
+            display: var(--date-display);
+            position: absolute;
+            top: 75px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--clock-bg-color, black);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .ticks { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 10; }
+        .tick {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            width: 2px; height: 10px;
+            top: 0; left: 50%;
+            transform-origin: center 175px;
+            margin-left: -1px;
+        }
+        .tick.major { background: #ffffff; width: 4px; height: 15px; margin-left: -2px; }
+        .numbers { position: absolute; width: 100%; height: 100%; z-index: 10; }
+        .num {
+            position: absolute;
+            width: 40px; height: 40px;
+            text-align: center; line-height: 40px;
+            font-size: 32px; font-weight: 500;
+            left: 50%; top: 50%;
+            margin-left: -20px; margin-top: -20px;
+        }
+        .hand {
+            position: absolute;
+            left: 50%; bottom: 50%;
+            transform-origin: bottom center;
+            border-radius: 10px; z-index: 10;
+        }
+        .hour-hand { width: 8px; height: 80px; background: #ffffff; margin-left: -4px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
+        .minute-hand { width: 6px; height: 120px; background: #ffffff; margin-left: -3px; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
+        .second-hand { width: 2px; height: 140px; background: #ff9500; margin-left: -1px; z-index: 11; }
+        .second-hand::after {
+            content: ''; position: absolute;
+            width: 8px; height: 8px;
+            background: #ff9500; border-radius: 50%;
+            bottom: -20px; left: 50%; margin-left: -4px;
+        }
+        .center-cap {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 12px; height: 12px;
+            background: rgba(var(--clock-face-color), var(--clock-opacity));
+            border: 2px solid #ff9500;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 12;
+        }
+
+        .footer-link {
+            position: fixed; bottom: 30px; opacity: 0;
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: rgba(255, 255, 255, 0.75);
+            font-size: 14px; font-weight: 400;
+            transition: opacity 1s ease, left 0.5s ease, right 0.5s ease;
+            z-index: 100; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+        .footer-link:hover { color: rgba(255, 255, 255, 1); }
+        .footer-link svg { fill: currentColor; width: 20px; height: 20px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8)); }
+        .pos-left { left: 30px; right: auto; }
+        .pos-right { left: auto; right: 30px; }
+    </style>
 </head>
 <body>
 
-  <!-- Dual Background Layers -->
-  <div id="bg1" class="bg-layer"></div>
-  <div id="bg2" class="bg-layer"></div>
+<div class="clock-container" id="clock">
+    <div class="background-overlay" id="clock-bg-overlay"></div>
+    <div class="liquid-glass-layer"></div>
+    <div class="date-display" id="date-time"></div>
+    <div class="ticks" id="ticks-container"></div>
+    <div class="numbers" id="numbers-container"></div>
+    <div class="hand hour-hand" id="hour"></div>
+    <div class="hand minute-hand" id="minute"></div>
+    <div class="hand second-hand" id="second"></div>
+    <div class="center-cap"></div>
+</div>
 
-  <!-- Smartwatch Container -->
-  <div class="watch-container">
-    <div id="clock-bg"></div>
-    <div id="glass-face" class="glass-face">
-      <div id="time">00:00</div>
-      <div id="date-display" style="display: none;">MON 24</div>
-    </div>
-  </div>
+<a href="https://github.com/andiohn/fruit-html-watch" target="_blank" class="footer-link pos-left" id="gh-link">
+    <svg viewBox="0 0 16 16">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+    </svg>
+    andiohn / fruit-html-watch
+</a>
 
-  <script>
-    // Memegen Template Registry Dataset
-    const MEMEGEN_REGISTRY = [
-      // Animated templates
-      { id: "oprah", lines: 2, animated: true, top: "you_get" },
-      { id: "bongo", lines: 2, animated: true, top: "Any sound when trying to sleep" },
-      { id: "both", lines: 2, animated: true, top: "hard or soft tacos" },
-      { id: "box", lines: 2, animated: true, top: "_" },
-      { id: "buzz", lines: 2, animated: true, top: "memes" },
-      { id: "cake", lines: 2, animated: true, top: "_" },
-      { id: "crowd", lines: 2, animated: true, top: "Push to CI" },
-      { id: "dodgson", lines: 2, animated: true, top: "we've got dodgson here!" },
-      { id: "fine", lines: 2, animated: true, top: "_" },
-      { id: "fry", lines: 2, animated: true, top: "not sure if trolling" },
-      { id: "happening", lines: 2, animated: true, top: "_" },
-      { id: "live", lines: 2, animated: true, top: "_" },
-      { id: "mb", lines: 2, animated: true, top: "'member" },
-      { id: "money", lines: 2, animated: true, top: "shut up and" },
-      { id: "patrick", lines: 2, animated: true, top: "why don't we take all memes" },
-      { id: "rollsafe", lines: 2, animated: true, top: "can't get fired" },
-      { id: "waygd", lines: 2, animated: true, top: "yeah..." },
-      
-      // Static templates
-      { id: "3hd", lines: 3, animated: false, top: "Pepperoni/Mushroom" },
-      { id: "aag", lines: 2, animated: false, top: "_" },
-      { id: "ackbar", lines: 2, animated: false, top: "_" },
-      { id: "afraid", lines: 2, animated: false, top: "i don't know what this meme is for" },
-      { id: "agnes", lines: 2, animated: false, top: "_" },
-      { id: "aint-got-time", lines: 2, animated: false, top: "memes?" },
-      { id: "ams", lines: 2, animated: false, top: "when watching a movie" },
-      { id: "ants", lines: 2, animated: false, top: "do you want ants?" },
-      { id: "astronaut", lines: 4, animated: false, top: "Wait it's round/Always has been/Flat Earther" },
-      { id: "bad", lines: 2, animated: false, top: "your meme is bad" },
-      { id: "bihw", lines: 2, animated: false, top: "it ain't much" },
-      { id: "blb", lines: 2, animated: false, top: "falls asleep in class" },
-      { id: "cmm", lines: 1, animated: false, top: "" },
-      { id: "db", lines: 3, animated: false, top: "Socialism/The Youth" },
-      { id: "disastergirl", lines: 2, animated: false, top: "_" },
-      { id: "doge", lines: 2, animated: false, top: "such meme" },
-      { id: "drake", lines: 2, animated: false, top: "left on unread" },
-      { id: "drowning", lines: 3, animated: false, top: "Me Asking for Help/Online Commenter" },
-      { id: "dwight", lines: 2, animated: false, top: "love is all you need?" },
-      { id: "elmo", lines: 5, animated: false, top: "Historical Accuracy/History Channel/Aliens/Historical Accuracy" },
-      { id: "gru", lines: 4, animated: false, top: "Learn memes/Make meme/No one likes it" },
-      { id: "harold", lines: 2, animated: false, top: "when boss sees" },
-      { id: "kermit", lines: 2, animated: false, top: "_" },
-      { id: "khaby-lame", lines: 2, animated: false, top: "Bad mood?" },
-      { id: "leo", lines: 2, animated: false, top: "I have no idea" },
-      { id: "mini-keanu", lines: 2, animated: false, top: "waiting for mom" },
-      { id: "pigeon", lines: 3, animated: false, top: "Engineer/PowerPoint" },
-      { id: "pooh", lines: 2, animated: false, top: "Burger King" },
-      { id: "sadfrog", lines: 2, animated: false, top: "_" },
-      { id: "spongebob", lines: 2, animated: false, top: "BF: I don't even know her" },
-      { id: "success", lines: 2, animated: false, top: "don't know a question" },
-      { id: "trump", lines: 2, animated: false, top: "this is the best meme" },
-      { id: "woman-cat", lines: 2, animated: false, top: "Mom telling me how useless I am" },
-      { id: "wonka", lines: 2, animated: false, top: "oh you just graduated" }
-    ];
+<script>
+    // Memegen Registry Dataset (Embedded 209 templates)
+    const RAW_REGISTRY = [["3hd",3,0,"Pepperoni/Mushroom"],["aag",2,0,"_"],["ackbar",2,0,"_"],["afraid",2,0,"i_don't_know_what_this_meme_is_for"],["agnes",2,0,"_"],["aint-got-time",2,0,"memes~q"],["ams",2,0,"when_you're_watching_a_movie"],["ants",2,0,"do_you_want_ants~q"],["apcr",2,0,"I_supported_my_sister's_abortion"],["astronaut",4,0,"Wait,_it's_round~q/Always_has_been/Flat_Earther"],["atis",2,0,"and_then_i_said"],["away",2,0,"life..."],["awesome",2,0,"say_a_word_wrong"],["awesome-awkward",2,0,"first_day_at_new_job"],["awkward",2,0,"start_telling_joke"],["awkward-awesome",2,0,"trip_guy_on_the_street"],["bad",2,0,"your_meme_is_bad"],["badchoice",2,0,"milk"],["balloon",3,0,"Opportunities/Opportunities"],["bd",2,0,"can't_workout"],["because",2,0,"Just_because_you_see_a_Black_man_driving_in_a_nice_car..._does_not_mean_it's_stolen."],["bender",2,0,"i'm_going_to_build_my_own_theme_park"],["bihw",2,0,"it_ain't_much"],["bilbo",2,0,"After_all..._why_not~q"],["biw",2,0,"gets_iced_coffee"],["blb",2,0,"falls_asleep_in_class"],["boat",2,0,"_"],["bongo",2,1,"Any_sound_when_you're_trying_to_sleep"],["both",2,1,"hard_or_soft_tacos"],["box",2,1,"_"],["bs",2,0,"what_a_surprise..."],["bus",2,0,"Postseason"],["buzz",2,1,"memes"],["cake",2,1,"_"],["captain",2,0,"look_at_me"],["captain-america",3,0,"Have_you_ever_eaten_a_clock~q/No,_why~q"],["cb",2,0,"i_stole"],["cbb",2,0,"_"],["cbg",2,0,"_"],["center",2,0,"what_is_this"],["ch",2,0,"if_you_wanted_to_avoid_the_friend_zone"],["chair",6,0,"Let's_expand_safety_nets/Socialism_never_works!/Scandinavia_is_socialist_and_they're_doing_great!/They're_not_socialist._They're_capitalist_with_strong_welfare_policies!/Then_let's_adopt_those!"],["cheems",2,0,"it's_a_good_time_to_sleep"],["chosen",1,0,"_"],["cmm",1,0,"_"],["crying-floor",2,0,"lie_down"],["crowd",2,1,"Push_to_CI"],["db",3,0,"Socialism/The_Youth"],["dg",2,0,"_"],["disastergirl",2,0,"_"],["dodgson",2,1,"we've_got_dodgson_here!"],["doge",2,0,"such_meme"],["drake",2,0,"left_on_unread"],["drowning",3,0,"Me_Asking_for_Help/Online_Commenter"],["dwight",2,0,"love_is_all_you_need~q"],["elmo",5,0,"Historical_Accuracy/History_Channel/Aliens/Historical_Accuracy"],["ermg",2,0,"ermahgerd"],["fa",2,0,"forever_alone"],["facepalm",2,0,"_"],["fbf",2,0,"smell_shirt"],["ff",2,0,"wifi_is_slow"],["fine",2,1,"_"],["fmg",2,0,"_"],["fry",2,1,"not_sure_if_trolling"],["fwp",2,0,"wifi_is_slow"],["gdb",2,0,"_"],["gears",2,0,"you_know_what_really_grinds_my_gears~q"],["ggg",2,0,"sees_typo"],["hip",2,0,"_"],["happening",2,1,"_"],["harold",2,0,"when_boss_sees"],["headaches",1,0,"_"],["iw",2,0,"_"],["jd",2,0,"_"],["joker",2,0,"_"],["jw",2,0,"_"],["kermit",2,0,"_"],["khaby-lame",2,0,"Bad_mood~q"],["kk",2,0,"_"],["kombucha",2,0,"trying_something_new"],["leo",2,0,"I_have_no_idea"],["live",2,1,"_"],["ll",2,0,"_"],["mb",2,1,"'member"],["mini-keanu",2,0,"waiting_for_mom"],["mma",2,0,"what_if_i_told_you"],["money",2,1,"shut_up_and"],["mordor",2,0,"one_does_not_simply"],["morpheus",2,0,"what_if_i_told_you"],["mw",2,0,"_"],["nice",2,0,"which_is_nice"],["noea",2,0,"_"],["oag",2,0,"i_know_you're_reading"],["offended",2,0,"_"],["omg",2,0,"_"],["oprah",2,1,"you_get"],["patrick",2,1,"why_don't_we_take_all_memes"],["persian",2,0,"what_is_this"],["pigeon",3,0,"Engineer/PowerPoint"],["pooh",2,0,"Burger_King"],["popcat",2,0,"pop"],["prop3",1,0,"_"],["rollsafe",2,1,"can't_get_fired"],["sad-biden",2,0,"_"],["sadfrog",2,0,"_"],["saltbae",2,0,"_"],["sarcasticbear",2,0,"_"],["sb",2,0,"borrows_car"],["sdb",2,0,"_"],["should",2,0,"_"],["ski",2,0,"the_rent_is_too_damn_high"],["sneeze",2,0,"holding_a_fart"],["sohere",2,0,"_"],["sohot",2,0,"memes"],["sparta",2,0,"_"],["spongebob",2,0,"BF:_I_don't_even_know_her"],["ss",2,0,"_"],["staring",2,0,"_"],["stop",2,0,"_"],["success",2,0,"don't_know_a_question"],["tasty",2,0,"_"],["toohigh",2,0,"_"],["touch",2,0,"_"],["trump",2,0,"this_is_the_best_meme"],["waygd",2,1,"yeah..."],["wishes",1,0,"_"],["woman-cat",2,0,"Mom_telling_me_how_useless_I_am"],["wonka",2,0,"oh_you_just_graduated"],["yaoming",2,0,"_"],["yallgot",2,0,"y'all_got_any_more_of_them"],["yodawg",2,0,"_"],["yuno",2,0,"Y_U_NO"],["zero-wing",1,0,"_"]];
+
+    const MEMEGEN_REGISTRY = RAW_REGISTRY.map(t => ({
+        id: t[0], lines: t[1], animated: t[2] === 1, top: t[3]
+    }));
 
     function sanitizeMemeText(text) {
-      if (!text || text === "_") return "_";
-      return text
-        .replace(/\?/g, "~q")
-        .replace(/%/g, "~p")
-        .replace(/#/g, "~h")
-        .replace(/\//g, "~s")
-        .replace(/\s+/g, "_")
-        .replace(/-+/g, "--");
+        if (!text || text === "_") return "_";
+        return text
+            .replace(/\?/g, "~q")
+            .replace(/%/g, "~p")
+            .replace(/#/g, "~h")
+            .replace(/\//g, "~s")
+            .replace(/\s+/g, "_")
+            .replace(/-+/g, "--");
     }
 
     function getCurrentDateMemeStr() {
-      const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"];
-      const d = new Date();
-      const m = months[d.getMonth()];
-      const day = d.getDate();
-      return `${m}_${day}`; // e.g. "sept_24"
+        const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"];
+        const d = new Date();
+        return `${months[d.getMonth()]}_${d.getDate()}`;
     }
 
     function resolveMemegenFlag(val) {
-      if (!val || typeof val !== 'string' || !val.includes("memegen_random")) return val;
+        if (!val || typeof val !== 'string' || !val.includes("memegen_random")) return val;
 
-      const isAnimated = val.includes("animated");
-      const isStatic = val.includes("static");
-      const includesDate = val.includes("date");
+        const isAnimated = val.includes("animated");
+        const isStatic = val.includes("static");
+        const includesDate = val.includes("date");
 
-      let pool = MEMEGEN_REGISTRY;
-      if (isAnimated) {
-        pool = MEMEGEN_REGISTRY.filter(t => t.animated);
-      } else if (isStatic) {
-        pool = MEMEGEN_REGISTRY.filter(t => !t.animated);
-      }
-
-      if (pool.length === 0) pool = MEMEGEN_REGISTRY;
-
-      const choice = pool[Math.floor(Math.random() * pool.length)];
-      const ext = choice.animated ? "gif" : "png";
-      const dateStr = includesDate ? getCurrentDateMemeStr() : "today";
-
-      let urlParts = [];
-      if (choice.lines === 1) {
-        urlParts.push(sanitizeMemeText(dateStr));
-      } else if (choice.lines === 2) {
-        const top = choice.top ? sanitizeMemeText(choice.top) : "you_get";
-        const bottom = sanitizeMemeText(dateStr);
-        urlParts.push(top, bottom);
-      } else {
-        const prefixParts = choice.top ? choice.top.split('/') : ["_"];
-        while (prefixParts.length < choice.lines - 1) {
-          prefixParts.push("_");
+        let pool = MEMEGEN_REGISTRY;
+        if (isAnimated) {
+            pool = MEMEGEN_REGISTRY.filter(t => t.animated);
+        } else if (isStatic) {
+            pool = MEMEGEN_REGISTRY.filter(t => !t.animated);
         }
-        const sanitizedPrefix = prefixParts.map(sanitizeMemeText);
-        urlParts = [...sanitizedPrefix, sanitizeMemeText(dateStr)];
-      }
 
-      return `https://api.memegen.link/images/${choice.id}/${urlParts.join("/")}.${ext}`;
+        if (pool.length === 0) pool = MEMEGEN_REGISTRY;
+
+        const choice = pool[Math.floor(Math.random() * pool.length)];
+        const ext = choice.animated ? "gif" : "png";
+        const dateStr = includesDate ? getCurrentDateMemeStr() : "today";
+
+        let urlParts = [];
+        if (choice.lines === 1) {
+            urlParts.push(sanitizeMemeText(dateStr));
+        } else if (choice.lines === 2) {
+            const top = choice.top ? sanitizeMemeText(choice.top) : "_";
+            urlParts.push(top, sanitizeMemeText(dateStr));
+        } else {
+            const prefixParts = choice.top ? choice.top.split('/') : ["_"];
+            while (prefixParts.length < choice.lines - 1) prefixParts.push("_");
+            urlParts = [...prefixParts.map(sanitizeMemeText), sanitizeMemeText(dateStr)];
+        }
+
+        return `https://api.memegen.link/images/${choice.id}/${urlParts.join("/")}.${ext}`;
     }
 
-    // Main Watch Setup
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
 
-      // Parse and resolve background flags
-      let bg1_url = resolveMemegenFlag(params.get('bg_img'));
-      let bg2_url = resolveMemegenFlag(params.get('bg_img2'));
-      let clock_bg_url = resolveMemegenFlag(params.get('clock_bg_img'));
+    const resolvedBgImg1 = resolveMemegenFlag(urlParams.get('bg_img'));
+    const resolvedBgImg2 = resolveMemegenFlag(urlParams.get('bg_img2'));
+    const resolvedClockBgImg = resolveMemegenFlag(urlParams.get('clock_bg_img'));
 
-      const bgMode1 = params.get('bg_mode') || 'center';
-      const bgMode2 = params.get('bg_mode2') || 'center';
-      const clockBgMode = params.get('clock_bg_mode') || 'center';
-      const bgColor = params.get('bg') || '#000000';
-      const showDate = params.get('date') === 'show';
-      const blurVal = params.get('blur') || '15';
-      const reloadH = parseFloat(params.get('reload_h')) || 12;
+    const bgImgData = [
+        { url: resolvedBgImg1, mode: urlParams.get('bg_mode') || 'center' },
+        { url: resolvedBgImg2, mode: urlParams.get('bg_mode2') || 'center' }
+    ];
+    const activeBackgrounds = bgImgData.filter(item => item.url);
 
-      // Apply Backgrounds
-      const bg1El = document.getElementById('bg1');
-      const bg2El = document.getElementById('bg2');
-      const clockBgEl = document.getElementById('clock-bg');
-      const glassEl = document.getElementById('glass-face');
+    const clockBgImg = resolvedClockBgImg;
+    const clockBgMode = urlParams.get('clock_bg_mode') || 'center';
 
-      if (bg1_url) {
-        bg1El.style.backgroundImage = `url("${bg1_url}")`;
-        bg1El.style.backgroundSize = bgMode1;
-      }
-      if (bg2_url) {
-        bg2El.style.backgroundImage = `url("${bg2_url}")`;
-        bg2El.style.backgroundSize = bgMode2;
-        
-        // Alternate between bg1 and bg2 every 10 seconds for burn-in prevention
-        let showBg1 = true;
-        setInterval(() => {
-          showBg1 = !showBg1;
-          bg1El.style.opacity = showBg1 ? "1" : "0";
-          bg2El.style.opacity = showBg1 ? "0" : "1";
-        }, 10000);
-      }
+    const bgColorParam = urlParams.get('bg'); 
+    const blurRadiusParam = urlParams.get('blur'); 
+    const dateParam = urlParams.get('date'); 
 
-      if (clock_bg_url) {
-        clockBgEl.style.backgroundImage = `url("${clock_bg_url}")`;
-        clockBgEl.style.backgroundSize = clockBgMode;
-        clockBgEl.style.filter = `blur(${blurVal}px)`;
-      }
-
-      if (bgColor) {
-        glassEl.style.backgroundColor = bgColor.startsWith('#') ? bgColor : `#${bgColor}`;
-      }
-
-      // Date visibility
-      const dateEl = document.getElementById('date-display');
-      if (showDate) {
-        dateEl.style.display = 'block';
-      }
-
-      // Time updater
-      function updateTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('time').textContent = `${hours}:${minutes}`;
-
-        if (showDate) {
-          const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-          dateEl.textContent = `${days[now.getDay()]} ${now.getDate()}`;
+    function setClockBackground(url, mode) {
+        const root = document.documentElement;
+        if (url) {
+            root.style.setProperty('--clock-bg-image', `url('${url}')`);
+            root.style.setProperty('--clock-bg-size', mode);
+        } else {
+            root.style.setProperty('--clock-bg-image', 'none');
         }
-      }
-      updateTime();
-      setInterval(updateTime, 1000);
+    }
 
-      // Automatic page reload
-      if (reloadH > 0) {
+    function setBodyBackground(url, mode) {
+        const body = document.body;
+        if (url) {
+            body.style.backgroundImage = `url('${url}')`;
+            body.style.backgroundSize = mode;
+        } else {
+            body.style.backgroundImage = 'none';
+        }
+    }
+
+    setClockBackground(clockBgImg, clockBgMode);
+
+    let currentBgIndex = 0;
+    if (activeBackgrounds.length > 0) {
+        setBodyBackground(activeBackgrounds[0].url, activeBackgrounds[0].mode);
+
+        if (activeBackgrounds.length > 1) {
+            setInterval(() => {
+                currentBgIndex = (currentBgIndex + 1) % activeBackgrounds.length;
+                const nextBg = activeBackgrounds[currentBgIndex];
+                setBodyBackground(nextBg.url, nextBg.mode);
+            }, 10000); 
+        }
+    }
+
+    if (bgColorParam) {
+        const hexColor = bgColorParam.replace('#', '');
+        if (/^[0-9A-Fa-f]{6}\$/.test(hexColor)) {
+            const r = parseInt(hexColor.substring(0, 2), 16);
+            const g = parseInt(hexColor.substring(2, 4), 16);
+            const b = parseInt(hexColor.substring(4, 6), 16);
+            
+            document.documentElement.style.setProperty('--clock-face-color', `${r}, ${g}, ${b}`);
+            
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            const dateDisplay = document.getElementById('date-time');
+            if (luminance > 0.5) {
+                dateDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+                dateDisplay.style.color = 'white';
+            } else {
+                dateDisplay.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                dateDisplay.style.color = 'black';
+            }
+        }
+    }
+
+    if (blurRadiusParam !== null && !isNaN(blurRadiusParam)) {
+        document.documentElement.style.setProperty('--clock-blur-radius', `${blurRadiusParam}px`);
+    }
+
+    if (dateParam === 'show') {
+        document.documentElement.style.setProperty('--date-display', 'block');
+    }
+
+    const ticksContainer = document.getElementById('ticks-container');
+    const numbersContainer = document.getElementById('numbers-container');
+
+    for (let i = 0; i < 60; i++) {
+        const tick = document.createElement('div');
+        tick.className = i % 5 === 0 ? 'tick major' : 'tick';
+        tick.style.transform = `rotate(${i * 6}deg)`;
+        ticksContainer.appendChild(tick);
+    }
+
+    for (let i = 1; i <= 12; i++) {
+        const num = document.createElement('div');
+        num.className = 'num';
+        num.textContent = i;
+        const angle = (i * 30) * (Math.PI / 180);
+        const radius = 135; 
+        const x = Math.sin(angle) * radius;
+        const y = -Math.cos(angle) * radius;
+        num.style.transform = `translate(${x}px, ${y}px)`;
+        numbersContainer.appendChild(num);
+    }
+
+    const hourHand = document.getElementById('hour');
+    const minuteHand = document.getElementById('minute');
+    const secondHand = document.getElementById('second');
+    const dateTimeDisplay = document.getElementById('date-time');
+
+    function updateClock() {
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const minutes = now.getMinutes();
+        const hours = now.getHours();
+
+        const secondDeg = (seconds / 60) * 360;
+        const minuteDeg = ((minutes + seconds / 60) / 60) * 360;
+        const hourDeg = (((hours % 12) + minutes / 60) / 12) * 360;
+
+        secondHand.style.transform = `rotate(${secondDeg}deg)`;
+        minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+        hourHand.style.transform = `rotate(${hourDeg}deg)`;
+
+        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        dateTimeDisplay.textContent = `${days[now.getDay()]} ${now.getDate()}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const clock = document.getElementById('clock');
+    let moveCount = 0;
+
+    function moveClock() {
+        clock.classList.add('hidden');
+        
         setTimeout(() => {
-          window.location.reload(true);
-        }, reloadH * 3600 * 1000);
-      }
-    });
-  </script>
+            const maxOffset = 15; 
+            const randomX = (Math.random() * (maxOffset * 2)) - maxOffset;
+            const randomY = (Math.random() * (maxOffset * 2)) - maxOffset;
+            
+            clock.style.transform = `translate(calc(-50% + ${randomX}px), calc(-50% + ${randomY}px))`;
+            
+            const link = document.getElementById('gh-link');
+            if (moveCount % 2 === 0) {
+                link.classList.remove('pos-right');
+                link.classList.add('pos-left');
+            } else {
+                link.classList.remove('pos-left');
+                link.classList.add('pos-right');
+            }
+            link.style.opacity = '1';
+
+            clock.classList.remove('hidden');
+            moveCount++;
+        }, 1500); 
+    }
+
+    setInterval(moveClock, 60000); 
+    setTimeout(moveClock, 1000);
+
+    const reloadParam = urlParams.get('reload_h');
+    let reloadHours = parseFloat(reloadParam);
+    if (isNaN(reloadHours) || reloadHours <= 0) reloadHours = 12; 
+    setTimeout(() => { window.location.reload(); }, reloadHours * 3600 * 1000);
+</script>
+
 </body>
 </html>
