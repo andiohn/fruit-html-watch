@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fruit HTML Watch</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      width: 100%; height: 100%;
+      overflow: hidden; background-color: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex; justify-content: center; align-items: center;
+    }
+    
+    /* Background Image Layers for Burn-in Prevention */
+    .bg-layer {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-position: center; background-repeat: no-repeat;
+      transition: opacity 1.5s ease-in-out; z-index: 1;
+    }
+    #bg1 { opacity: 1; }
+    #bg2 { opacity: 0; }
+
+    /* Smartwatch Frame & Liquid Glass Face */
+    .watch-container {
+      position: relative; width: 380px; height: 460px;
+      border-radius: 80px; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.3);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 2;
+    }
+
+    /* Clock Background with Blur */
+    #clock-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-position: center; background-repeat: no-repeat;
+      z-index: 1; filter: blur(15px); transform: scale(1.1);
+    }
+
+    /* Liquid Glass Overlay Face */
+    .glass-face {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4); z-index: 2;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    }
+
+    #time { font-size: 5.2rem; font-weight: 700; tracking: -2px; line-height: 1; }
+    #date-display { font-size: 1.2rem; font-weight: 500; margin-top: 10px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+  <!-- Dual Background Layers -->
+  <div id="bg1" class="bg-layer"></div>
+  <div id="bg2" class="bg-layer"></div>
+
+  <!-- Smartwatch Container -->
+  <div class="watch-container">
+    <div id="clock-bg"></div>
+    <div id="glass-face" class="glass-face">
+      <div id="time">00:00</div>
+      <div id="date-display" style="display: none;">MON 24</div>
+    </div>
+  </div>
+
+  <script>
+    // Memegen Template Registry Dataset
+    const MEMEGEN_REGISTRY = [
+      // Animated templates
+      { id: "oprah", lines: 2, animated: true, top: "you_get" },
+      { id: "bongo", lines: 2, animated: true, top: "Any sound when trying to sleep" },
+      { id: "both", lines: 2, animated: true, top: "hard or soft tacos" },
+      { id: "box", lines: 2, animated: true, top: "_" },
+      { id: "buzz", lines: 2, animated: true, top: "memes" },
+      { id: "cake", lines: 2, animated: true, top: "_" },
+      { id: "crowd", lines: 2, animated: true, top: "Push to CI" },
+      { id: "dodgson", lines: 2, animated: true, top: "we've got dodgson here!" },
+      { id: "fine", lines: 2, animated: true, top: "_" },
+      { id: "fry", lines: 2, animated: true, top: "not sure if trolling" },
+      { id: "happening", lines: 2, animated: true, top: "_" },
+      { id: "live", lines: 2, animated: true, top: "_" },
+      { id: "mb", lines: 2, animated: true, top: "'member" },
+      { id: "money", lines: 2, animated: true, top: "shut up and" },
+      { id: "patrick", lines: 2, animated: true, top: "why don't we take all memes" },
+      { id: "rollsafe", lines: 2, animated: true, top: "can't get fired" },
+      { id: "waygd", lines: 2, animated: true, top: "yeah..." },
+      
+      // Static templates
+      { id: "3hd", lines: 3, animated: false, top: "Pepperoni/Mushroom" },
+      { id: "aag", lines: 2, animated: false, top: "_" },
+      { id: "ackbar", lines: 2, animated: false, top: "_" },
+      { id: "afraid", lines: 2, animated: false, top: "i don't know what this meme is for" },
+      { id: "agnes", lines: 2, animated: false, top: "_" },
+      { id: "aint-got-time", lines: 2, animated: false, top: "memes?" },
+      { id: "ams", lines: 2, animated: false, top: "when watching a movie" },
+      { id: "ants", lines: 2, animated: false, top: "do you want ants?" },
+      { id: "astronaut", lines: 4, animated: false, top: "Wait it's round/Always has been/Flat Earther" },
+      { id: "bad", lines: 2, animated: false, top: "your meme is bad" },
+      { id: "bihw", lines: 2, animated: false, top: "it ain't much" },
+      { id: "blb", lines: 2, animated: false, top: "falls asleep in class" },
+      { id: "cmm", lines: 1, animated: false, top: "" },
+      { id: "db", lines: 3, animated: false, top: "Socialism/The Youth" },
+      { id: "disastergirl", lines: 2, animated: false, top: "_" },
+      { id: "doge", lines: 2, animated: false, top: "such meme" },
+      { id: "drake", lines: 2, animated: false, top: "left on unread" },
+      { id: "drowning", lines: 3, animated: false, top: "Me Asking for Help/Online Commenter" },
+      { id: "dwight", lines: 2, animated: false, top: "love is all you need?" },
+      { id: "elmo", lines: 5, animated: false, top: "Historical Accuracy/History Channel/Aliens/Historical Accuracy" },
+      { id: "gru", lines: 4, animated: false, top: "Learn memes/Make meme/No one likes it" },
+      { id: "harold", lines: 2, animated: false, top: "when boss sees" },
+      { id: "kermit", lines: 2, animated: false, top: "_" },
+      { id: "khaby-lame", lines: 2, animated: false, top: "Bad mood?" },
+      { id: "leo", lines: 2, animated: false, top: "I have no idea" },
+      { id: "mini-keanu", lines: 2, animated: false, top: "waiting for mom" },
+      { id: "pigeon", lines: 3, animated: false, top: "Engineer/PowerPoint" },
+      { id: "pooh", lines: 2, animated: false, top: "Burger King" },
+      { id: "sadfrog", lines: 2, animated: false, top: "_" },
+      { id: "spongebob", lines: 2, animated: false, top: "BF: I don't even know her" },
+      { id: "success", lines: 2, animated: false, top: "don't know a question" },
+      { id: "trump", lines: 2, animated: false, top: "this is the best meme" },
+      { id: "woman-cat", lines: 2, animated: false, top: "Mom telling me how useless I am" },
+      { id: "wonka", lines: 2, animated: false, top: "oh you just graduated" }
+    ];
+
+    function sanitizeMemeText(text) {
+      if (!text || text === "_") return "_";
+      return text
+        .replace(/\?/g, "~q")
+        .replace(/%/g, "~p")
+        .replace(/#/g, "~h")
+        .replace(/\//g, "~s")
+        .replace(/\s+/g, "_")
+        .replace(/-+/g, "--");
+    }
+
+    function getCurrentDateMemeStr() {
+      const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sept", "oct", "nov", "dec"];
+      const d = new Date();
+      const m = months[d.getMonth()];
+      const day = d.getDate();
+      return `${m}_${day}`; // e.g. "sept_24"
+    }
+
+    function resolveMemegenFlag(val) {
+      if (!val || typeof val !== 'string' || !val.includes("memegen_random")) return val;
+
+      const isAnimated = val.includes("animated");
+      const isStatic = val.includes("static");
+      const includesDate = val.includes("date");
+
+      let pool = MEMEGEN_REGISTRY;
+      if (isAnimated) {
+        pool = MEMEGEN_REGISTRY.filter(t => t.animated);
+      } else if (isStatic) {
+        pool = MEMEGEN_REGISTRY.filter(t => !t.animated);
+      }
+
+      if (pool.length === 0) pool = MEMEGEN_REGISTRY;
+
+      const choice = pool[Math.floor(Math.random() * pool.length)];
+      const ext = choice.animated ? "gif" : "png";
+      const dateStr = includesDate ? getCurrentDateMemeStr() : "today";
+
+      let urlParts = [];
+      if (choice.lines === 1) {
+        urlParts.push(sanitizeMemeText(dateStr));
+      } else if (choice.lines === 2) {
+        const top = choice.top ? sanitizeMemeText(choice.top) : "you_get";
+        const bottom = sanitizeMemeText(dateStr);
+        urlParts.push(top, bottom);
+      } else {
+        const prefixParts = choice.top ? choice.top.split('/') : ["_"];
+        while (prefixParts.length < choice.lines - 1) {
+          prefixParts.push("_");
+        }
+        const sanitizedPrefix = prefixParts.map(sanitizeMemeText);
+        urlParts = [...sanitizedPrefix, sanitizeMemeText(dateStr)];
+      }
+
+      return `https://api.memegen.link/images/${choice.id}/${urlParts.join("/")}.${ext}`;
+    }
+
+    // Main Watch Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+
+      // Parse and resolve background flags
+      let bg1_url = resolveMemegenFlag(params.get('bg_img'));
+      let bg2_url = resolveMemegenFlag(params.get('bg_img2'));
+      let clock_bg_url = resolveMemegenFlag(params.get('clock_bg_img'));
+
+      const bgMode1 = params.get('bg_mode') || 'center';
+      const bgMode2 = params.get('bg_mode2') || 'center';
+      const clockBgMode = params.get('clock_bg_mode') || 'center';
+      const bgColor = params.get('bg') || '#000000';
+      const showDate = params.get('date') === 'show';
+      const blurVal = params.get('blur') || '15';
+      const reloadH = parseFloat(params.get('reload_h')) || 12;
+
+      // Apply Backgrounds
+      const bg1El = document.getElementById('bg1');
+      const bg2El = document.getElementById('bg2');
+      const clockBgEl = document.getElementById('clock-bg');
+      const glassEl = document.getElementById('glass-face');
+
+      if (bg1_url) {
+        bg1El.style.backgroundImage = `url("${bg1_url}")`;
+        bg1El.style.backgroundSize = bgMode1;
+      }
+      if (bg2_url) {
+        bg2El.style.backgroundImage = `url("${bg2_url}")`;
+        bg2El.style.backgroundSize = bgMode2;
+        
+        // Alternate between bg1 and bg2 every 10 seconds for burn-in prevention
+        let showBg1 = true;
+        setInterval(() => {
+          showBg1 = !showBg1;
+          bg1El.style.opacity = showBg1 ? "1" : "0";
+          bg2El.style.opacity = showBg1 ? "0" : "1";
+        }, 10000);
+      }
+
+      if (clock_bg_url) {
+        clockBgEl.style.backgroundImage = `url("${clock_bg_url}")`;
+        clockBgEl.style.backgroundSize = clockBgMode;
+        clockBgEl.style.filter = `blur(${blurVal}px)`;
+      }
+
+      if (bgColor) {
+        glassEl.style.backgroundColor = bgColor.startsWith('#') ? bgColor : `#${bgColor}`;
+      }
+
+      // Date visibility
+      const dateEl = document.getElementById('date-display');
+      if (showDate) {
+        dateEl.style.display = 'block';
+      }
+
+      // Time updater
+      function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = `${hours}:${minutes}`;
+
+        if (showDate) {
+          const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+          dateEl.textContent = `${days[now.getDay()]} ${now.getDate()}`;
+        }
+      }
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      // Automatic page reload
+      if (reloadH > 0) {
+        setTimeout(() => {
+          window.location.reload(true);
+        }, reloadH * 3600 * 1000);
+      }
+    });
+  </script>
+</body>
+</html>
